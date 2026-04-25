@@ -17,6 +17,7 @@ namespace GUI
         RegistroBLL registroBLL = new RegistroBLL();
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         UsuarioBE usuarioActual;
+        public event EventHandler CerrarSesion;
 
         public frmSesion(UsuarioBE usuarioP)
         {
@@ -41,9 +42,7 @@ namespace GUI
             registroBLL.RegistrarEvento("Cierre de sesión del usuario: " + usuarioActual.Nombre, usuarioActual);
             usuarioBLL.CerrarSesion();
             MessageBox.Show("La sesión se cerró correctamente.", "Sesión Cerrada", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            frmLogIn frmLogIn = new frmLogIn();
-            frmLogIn.Show();
-            this.Close();
+            CerrarSesion?.Invoke(this, EventArgs.Empty);
         }
     }
 }

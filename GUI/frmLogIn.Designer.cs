@@ -33,7 +33,6 @@
             btnIniciarSesion = new Button();
             label1 = new Label();
             label2 = new Label();
-            btnSalir = new Button();
             SuspendLayout();
             // 
             // txtUsuario
@@ -78,22 +77,11 @@
             label2.TabIndex = 4;
             label2.Text = "Contraseña";
             // 
-            // btnSalir
-            // 
-            btnSalir.Location = new Point(35, 212);
-            btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(194, 44);
-            btnSalir.TabIndex = 5;
-            btnSalir.Text = "Salir";
-            btnSalir.UseVisualStyleBackColor = true;
-            btnSalir.Click += btnSalir_Click;
-            // 
             // frmLogIn
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(273, 287);
-            Controls.Add(btnSalir);
+            ClientSize = new Size(273, 224);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(btnIniciarSesion);
@@ -112,6 +100,5 @@
         private Button btnIniciarSesion;
         private Label label1;
         private Label label2;
-        private Button btnSalir;
     }
 }

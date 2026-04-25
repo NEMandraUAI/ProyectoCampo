@@ -1,5 +1,6 @@
 using BE;
 using BLL;
+using GUI.Eventos;
 
 namespace GUI
 {
@@ -7,6 +8,7 @@ namespace GUI
     {
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         RegistroBLL registroBLL = new RegistroBLL();
+        public event EventHandler<LogInEventArgs> LoginExitoso;
 
         public frmLogIn()
         {
@@ -20,19 +22,12 @@ namespace GUI
             if (usuarioLogueado != null)
             {
                 registroBLL.RegistrarEvento("Inicio de sesión del usuario: " + usuarioLogueado.Nombre, usuarioLogueado);
-                frmSesion frmSesion = new frmSesion(usuarioLogueado);
-                frmSesion.Show();
-                this.Hide();
+                LoginExitoso?.Invoke(this, new LogInEventArgs(usuarioLogueado));
             }
             else
             {
                 MessageBox.Show("Usuario o clave incorrectos.");
             }
-        }
-
-        private void btnSalir_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
         }
     }
 }
