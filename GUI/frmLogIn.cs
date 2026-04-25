@@ -7,7 +7,6 @@ namespace GUI
     public partial class frmLogIn : Form
     {
         UsuarioBLL usuarioBLL = new UsuarioBLL();
-        RegistroBLL registroBLL = new RegistroBLL();
         public event EventHandler<LogInEventArgs> LoginExitoso;
 
         public frmLogIn()
@@ -17,16 +16,19 @@ namespace GUI
 
         private void btnIniciarSesion_Click_1(object sender, EventArgs e)
         {
-            UsuarioBE usuarioLogueado = usuarioBLL.IniciarSesion(txtUsuario.Text, txtClave.Text);
-
-            if (usuarioLogueado != null)
+            if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtClave.Text))
             {
-                registroBLL.RegistrarEvento("Inicio de sesión del usuario: " + usuarioLogueado.Nombre, usuarioLogueado);
+                MessageBox.Show("Por favor, complete ambos campos para iniciar sesión.", "Campos incompletos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            try
+            {
+                UsuarioBE usuarioLogueado = usuarioBLL.IniciarSesion(txtUsuario.Text, txtClave.Text);
                 LoginExitoso?.Invoke(this, new LogInEventArgs(usuarioLogueado));
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Usuario o clave incorrectos.");
+                MessageBox.Show(ex.Message, "Error de Autenticación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }

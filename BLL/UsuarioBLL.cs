@@ -12,26 +12,57 @@ namespace BLL
     public class UsuarioBLL
     {
         private UsuarioDAL usuarioDAL = new UsuarioDAL();
+        private RegistroBLL registroBLL = new RegistroBLL();
         public UsuarioBE IniciarSesion(string usuario, string clavePlana)
         {
             UsuarioBE usuarioBD = usuarioDAL.ObtenerPorUsername(usuario);
             if (usuarioBD == null)
             {
-                return null;
+                throw new Exception("Usuario o clave incorrectos.");
+            }
+            if (usuarioBD.Bloqueado)
+            {
+                registroBLL.RegistrarEvento("Intento de acceso a cuenta bloqueada: " + usuarioBD.Nombre, usuarioBD);
+                throw new Exception("El usuario se encuentra bloqueado por múltiples intentos fallidos. Contacte al administrador.");
             }
             bool hashCoincide = CryptoManager.Comparar(clavePlana, usuarioBD.Clave);
             if (hashCoincide)
             {
+                if (usuarioBD.IntentosFallidos > 0)
+                {
+                    usuarioBD.IntentosFallidos = 0;
+                    usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                }
+                registroBLL.RegistrarEvento("Inicio de sesión del usuario: " + usuarioBD.Nombre, usuarioBD);
                 SessionManager.Instancia.Iniciar(usuarioBD);
                 return usuarioBD;
             }
             else
             {
-                return null;
+                usuarioBD.IntentosFallidos++;
+
+                if (usuarioBD.IntentosFallidos >= 3)
+                {
+                    usuarioBD.Bloqueado = true;
+                    usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                    registroBLL.RegistrarEvento($"Usuario <{usuarioBD.Nombre}> bloqueado por superar límite de intentos (3)", usuarioBD);
+                    throw new Exception("Su cuenta ha sido bloqueada tras 3 intentos fallidos.");
+                }
+                else
+                {
+                    usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                    registroBLL.RegistrarEvento($"Intento de inicio de sesión fallido. Intento #{usuarioBD.IntentosFallidos}. Usuario: " + usuarioBD.Nombre, usuarioBD);
+                    int intentosRestantes = 3 - usuarioBD.IntentosFallidos;
+                    throw new Exception($"Usuario o clave incorrectos. Le quedan {intentosRestantes} intento(s).");
+                }
             }
         }
         public void CerrarSesion()
         {
+            if (SessionManager.Instancia.UsuarioActual != null)
+            {
+                registroBLL.RegistrarEvento("Cierre de sesión del usuario: " + SessionManager.Instancia.UsuarioActual.Nombre, SessionManager.Instancia.UsuarioActual);
+            }
             SessionManager.Instancia.Cerrar();
         }
     }

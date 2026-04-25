@@ -11,5 +11,7 @@ namespace BE
         public int ID { get; set; }
         public string Nombre { get; set; }
         public string Clave { get; set; }
+        public int IntentosFallidos { get; set; }
+        public bool Bloqueado { get; set; }
     }
 }

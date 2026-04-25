@@ -39,7 +39,6 @@ namespace GUI
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
-            registroBLL.RegistrarEvento("Cierre de sesión del usuario: " + usuarioActual.Nombre, usuarioActual);
             usuarioBLL.CerrarSesion();
             MessageBox.Show("La sesión se cerró correctamente.", "Sesión Cerrada", MessageBoxButtons.OK, MessageBoxIcon.Information);
             CerrarSesion?.Invoke(this, EventArgs.Empty);
