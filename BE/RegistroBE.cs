@@ -8,7 +8,7 @@ namespace BE
 {
     public class RegistroBE
     {
-        public int RegID { get; set; }
+        public int ID_Registro { get; set; }
         public int ID_Usuario { get; set; }
         public DateTime FechaHora { get; set; }
         public string Evento { get; set; }

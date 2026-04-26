@@ -27,7 +27,7 @@ namespace DAL
             List<RegistroBE> lr = new List<RegistroBE>();
             SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion();
             StringBuilder consulta = new StringBuilder(@"
-                SELECT b.Id_Reg, b.Id_Usuario, b.FechaHora, b.Evento, b.Criticidad, u.Nombre as NombreUsuario 
+                SELECT b.ID_Reg, b.ID_Usuario, b.FechaHora, b.Evento, b.Criticidad, u.Nombre as NombreUsuario 
                 FROM Bitacora b 
                 INNER JOIN Usuario u ON b.ID_Usuario = u.ID 
                 WHERE 1=1");
@@ -57,8 +57,8 @@ namespace DAL
             while (reader.Read())
             {
                 RegistroBE registro = new RegistroBE();
-                registro.RegID = Convert.ToInt32(reader["Id_Reg"]);
-                registro.ID_Usuario = Convert.ToInt32(reader["Id_Usuario"]);
+                registro.ID_Registro = Convert.ToInt32(reader["ID_Reg"]);
+                registro.ID_Usuario = Convert.ToInt32(reader["ID_Usuario"]);
                 registro.FechaHora = Convert.ToDateTime(reader["FechaHora"]);
                 registro.Evento = reader["Evento"].ToString();
                 registro.Criticidad = reader["Criticidad"].ToString();

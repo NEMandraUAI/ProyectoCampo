@@ -53,13 +53,13 @@
             lblBienvenida.AutoSize = true;
             lblBienvenida.Location = new Point(12, 69);
             lblBienvenida.Name = "lblBienvenida";
-            lblBienvenida.Size = new Size(151, 15);
+            lblBienvenida.Size = new Size(162, 15);
             lblBienvenida.TabIndex = 0;
-            lblBienvenida.Text = "Sesión activa - Bienvenido, ";
+            lblBienvenida.Text = "Sesión activa - Bienvenido/a, ";
             // 
             // btnCerrarSesion
             // 
-            btnCerrarSesion.Location = new Point(51, 127);
+            btnCerrarSesion.Location = new Point(63, 127);
             btnCerrarSesion.Name = "btnCerrarSesion";
             btnCerrarSesion.Size = new Size(135, 50);
             btnCerrarSesion.TabIndex = 1;
@@ -184,7 +184,7 @@
             // cmbCriticidad
             // 
             cmbCriticidad.FormattingEnabled = true;
-            cmbCriticidad.Items.AddRange(new object[] { "Todos", "INFO", "ALERTA", "CRÍTICO" });
+            cmbCriticidad.Items.AddRange(new object[] { "Todos", "INFO", "ALERTA", "CRÍTICO", "ALTA" });
             cmbCriticidad.Location = new Point(3, 83);
             cmbCriticidad.Name = "cmbCriticidad";
             cmbCriticidad.Size = new Size(276, 23);

@@ -15,6 +15,10 @@ namespace BLL
         private RegistroBLL registroBLL = new RegistroBLL();
         public UsuarioBE IniciarSesion(string usuario, string clavePlana)
         {
+            if (SessionManager.Instancia.UsuarioActual != null)
+            {
+                throw new Exception("Operación denegada. Ya existe una sesión activa en el sistema.");
+            }
             UsuarioBE usuarioBD = usuarioDAL.ObtenerPorUsername(usuario);
             if (usuarioBD == null)
             {
@@ -40,7 +44,6 @@ namespace BLL
             else
             {
                 usuarioBD.IntentosFallidos++;
-
                 if (usuarioBD.IntentosFallidos >= 3)
                 {
                     usuarioBD.Bloqueado = true;

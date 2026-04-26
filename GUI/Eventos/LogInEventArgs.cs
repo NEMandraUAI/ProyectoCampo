@@ -10,7 +10,6 @@ namespace GUI.Eventos
     public class LogInEventArgs : EventArgs
     {
         public UsuarioBE Usuario { get; set; }
-
         public LogInEventArgs(UsuarioBE usuario)
         {
             Usuario = usuario;

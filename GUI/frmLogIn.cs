@@ -8,13 +8,12 @@ namespace GUI
     {
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         public event EventHandler<LogInEventArgs> LoginExitoso;
-
         public frmLogIn()
         {
             InitializeComponent();
             txtClave.PasswordChar = '*';
+            btnVerClave.Text = "Ver Clave";
         }
-
         private void btnIniciarSesion_Click_1(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtClave.Text))
@@ -32,7 +31,6 @@ namespace GUI
                 MessageBox.Show(ex.Message, "Error de Autenticación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
         private void btnVerClave_Click(object sender, EventArgs e)
         {
             if (txtClave.PasswordChar == '*')

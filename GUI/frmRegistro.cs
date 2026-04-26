@@ -19,8 +19,8 @@ namespace GUI
             InitializeComponent();
             txtClave1.PasswordChar = '*';
             txtClave2.PasswordChar = '*';
+            btnVerClave.Text = "Ver Clave";
         }
-
         private void btnRegistrar_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtClave1.Text) || string.IsNullOrWhiteSpace(txtClave2.Text))
@@ -44,7 +44,6 @@ namespace GUI
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void btnVerClave_Click(object sender, EventArgs e)
         {
             if (txtClave1.PasswordChar == '*' && txtClave2.PasswordChar == '*')
