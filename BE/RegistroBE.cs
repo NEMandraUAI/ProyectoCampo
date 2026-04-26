@@ -12,5 +12,7 @@ namespace BE
         public int ID_Usuario { get; set; }
         public DateTime FechaHora { get; set; }
         public string Evento { get; set; }
+        public string Criticidad { get; set; }
+        public string NombreUsuario { get; set; }
     }
 }

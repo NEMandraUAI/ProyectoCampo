@@ -68,5 +68,12 @@ namespace GUI
         {
             Application.Exit();
         }
+
+        private void registrarseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmRegistro registro = new frmRegistro();
+            registro.MdiParent = this;
+            registro.Show();
+        }
     }
 }

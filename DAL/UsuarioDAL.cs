@@ -42,5 +42,33 @@ namespace DAL
             cmd.ExecuteNonQuery();
             ConexionDAL.Instancia.CerrarConexion();
         }
+        public List<UsuarioBE> ListarTodos()
+        {
+            List<UsuarioBE> lista = new List<UsuarioBE>();
+            SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion();
+            string consulta = "SELECT ID, Nombre FROM Usuario";
+            SqlCommand cmd = new SqlCommand(consulta, cn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                UsuarioBE usuario = new UsuarioBE();
+                usuario.ID = Convert.ToInt32(reader["ID"]);
+                usuario.Nombre = reader["Nombre"].ToString();
+                lista.Add(usuario);
+            }
+            reader.Close();
+            ConexionDAL.Instancia.CerrarConexion();
+            return lista;
+        }
+        public void CrearUsuario(UsuarioBE nuevoUsuario)
+        {
+            SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion();
+            string consulta = "INSERT INTO Usuario (Nombre, Clave, IntentosFallidos, Bloqueado) VALUES (@Nombre, @Clave, 0, 0)";
+            SqlCommand cmd = new SqlCommand(consulta, cn);
+            cmd.Parameters.AddWithValue("@Nombre", nuevoUsuario.Nombre);
+            cmd.Parameters.AddWithValue("@Clave", nuevoUsuario.Clave);
+            cmd.ExecuteNonQuery();
+            ConexionDAL.Instancia.CerrarConexion();
+        }
     }
 }

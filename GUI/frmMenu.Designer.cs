@@ -32,6 +32,7 @@
             iniciarSesionToolStripMenuItem = new ToolStripMenuItem();
             iniciarSesiónToolStripMenuItem = new ToolStripMenuItem();
             salirToolStripMenuItem = new ToolStripMenuItem();
+            registrarseToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -46,7 +47,7 @@
             // 
             // iniciarSesionToolStripMenuItem
             // 
-            iniciarSesionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { iniciarSesiónToolStripMenuItem });
+            iniciarSesionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { iniciarSesiónToolStripMenuItem, registrarseToolStripMenuItem });
             iniciarSesionToolStripMenuItem.Name = "iniciarSesionToolStripMenuItem";
             iniciarSesionToolStripMenuItem.Size = new Size(53, 20);
             iniciarSesionToolStripMenuItem.Text = "Sesión";
@@ -64,6 +65,13 @@
             salirToolStripMenuItem.Size = new Size(41, 20);
             salirToolStripMenuItem.Text = "Salir";
             salirToolStripMenuItem.Click += salirToolStripMenuItem_Click;
+            // 
+            // registrarseToolStripMenuItem
+            // 
+            registrarseToolStripMenuItem.Name = "registrarseToolStripMenuItem";
+            registrarseToolStripMenuItem.Size = new Size(180, 22);
+            registrarseToolStripMenuItem.Text = "Registrarse";
+            registrarseToolStripMenuItem.Click += registrarseToolStripMenuItem_Click;
             // 
             // frmMenu
             // 
@@ -87,5 +95,6 @@
         private ToolStripMenuItem iniciarSesionToolStripMenuItem;
         private ToolStripMenuItem iniciarSesiónToolStripMenuItem;
         private ToolStripMenuItem salirToolStripMenuItem;
+        private ToolStripMenuItem registrarseToolStripMenuItem;
     }
 }

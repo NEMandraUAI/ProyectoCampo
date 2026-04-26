@@ -33,6 +33,7 @@
             btnIniciarSesion = new Button();
             label1 = new Label();
             label2 = new Label();
+            btnVerClave = new Button();
             SuspendLayout();
             // 
             // txtUsuario
@@ -46,12 +47,13 @@
             // 
             txtClave.Location = new Point(35, 104);
             txtClave.Name = "txtClave";
+            txtClave.PasswordChar = '*';
             txtClave.Size = new Size(194, 23);
             txtClave.TabIndex = 1;
             // 
             // btnIniciarSesion
             // 
-            btnIniciarSesion.Location = new Point(35, 162);
+            btnIniciarSesion.Location = new Point(35, 217);
             btnIniciarSesion.Name = "btnIniciarSesion";
             btnIniciarSesion.Size = new Size(194, 44);
             btnIniciarSesion.TabIndex = 2;
@@ -77,11 +79,22 @@
             label2.TabIndex = 4;
             label2.Text = "Contraseña";
             // 
+            // btnVerClave
+            // 
+            btnVerClave.Location = new Point(35, 167);
+            btnVerClave.Name = "btnVerClave";
+            btnVerClave.Size = new Size(194, 44);
+            btnVerClave.TabIndex = 5;
+            btnVerClave.Text = "Ver Clave";
+            btnVerClave.UseVisualStyleBackColor = true;
+            btnVerClave.Click += btnVerClave_Click;
+            // 
             // frmLogIn
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(273, 224);
+            ClientSize = new Size(273, 273);
+            Controls.Add(btnVerClave);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(btnIniciarSesion);
@@ -100,5 +113,6 @@
         private Button btnIniciarSesion;
         private Label label1;
         private Label label2;
+        private Button btnVerClave;
     }
 }

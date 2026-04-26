@@ -22,7 +22,7 @@ namespace BLL
             }
             if (usuarioBD.Bloqueado)
             {
-                registroBLL.RegistrarEvento("Intento de acceso a cuenta bloqueada: " + usuarioBD.Nombre, usuarioBD);
+                registroBLL.RegistrarEvento("Intento de acceso a cuenta bloqueada: " + usuarioBD.Nombre, usuarioBD, "CRÍTICO");
                 throw new Exception("El usuario se encuentra bloqueado por múltiples intentos fallidos. Contacte al administrador.");
             }
             bool hashCoincide = CryptoManager.Comparar(clavePlana, usuarioBD.Clave);
@@ -45,13 +45,13 @@ namespace BLL
                 {
                     usuarioBD.Bloqueado = true;
                     usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
-                    registroBLL.RegistrarEvento($"Usuario <{usuarioBD.Nombre}> bloqueado por superar límite de intentos (3)", usuarioBD);
+                    registroBLL.RegistrarEvento($"Usuario <{usuarioBD.Nombre}> bloqueado por superar límite de intentos (3)", usuarioBD, "CRÍTICO");
                     throw new Exception("Su cuenta ha sido bloqueada tras 3 intentos fallidos.");
                 }
                 else
                 {
                     usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
-                    registroBLL.RegistrarEvento($"Intento de inicio de sesión fallido. Intento #{usuarioBD.IntentosFallidos}. Usuario: " + usuarioBD.Nombre, usuarioBD);
+                    registroBLL.RegistrarEvento($"Intento de inicio de sesión fallido. Intento #{usuarioBD.IntentosFallidos}. Usuario: " + usuarioBD.Nombre, usuarioBD, "ALERTA");
                     int intentosRestantes = 3 - usuarioBD.IntentosFallidos;
                     throw new Exception($"Usuario o clave incorrectos. Le quedan {intentosRestantes} intento(s).");
                 }
@@ -64,6 +64,20 @@ namespace BLL
                 registroBLL.RegistrarEvento("Cierre de sesión del usuario: " + SessionManager.Instancia.UsuarioActual.Nombre, SessionManager.Instancia.UsuarioActual);
             }
             SessionManager.Instancia.Cerrar();
+        }
+        public List<UsuarioBE> ListarTodos() => usuarioDAL.ListarTodos();
+        public void RegistrarUsuario(string nombre, string clavePlana)
+        {
+            if (usuarioDAL.ObtenerPorUsername(nombre) != null)
+            {
+                throw new Exception("El nombre de usuario ya se encuentra registrado.");
+            }
+            UsuarioBE nuevoUsuario = new UsuarioBE();
+            nuevoUsuario.Nombre = nombre;
+            nuevoUsuario.Clave = CryptoManager.GenerarHash(clavePlana);
+            usuarioDAL.CrearUsuario(nuevoUsuario);
+            UsuarioBE usuarioCreado = usuarioDAL.ObtenerPorUsername(nombre);
+            registroBLL.RegistrarEvento("Nuevo usuario registrado: " + nombre, usuarioCreado, "ALTA");
         }
     }
 }

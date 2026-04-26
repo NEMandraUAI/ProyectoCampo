@@ -8,7 +8,7 @@ namespace Seguridad
     public static class CryptoManager
     {
         public static bool Comparar(string claveIngresada, string claveBD) => claveBD == GenerarHash(claveIngresada) ? true : false;
-        private static string GenerarHash(string textoPlano)
+        public static string GenerarHash(string textoPlano)
         {
             using (SHA256 sha256 = SHA256.Create())
             {
