@@ -122,7 +122,7 @@
             Controls.Add(txtClave1);
             Controls.Add(txtUsuario);
             Name = "frmRegistro";
-            Text = "frmRegistro";
+            Text = "Registro";
             ResumeLayout(false);
             PerformLayout();
         }

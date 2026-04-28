@@ -31,8 +31,8 @@
             menuStrip1 = new MenuStrip();
             iniciarSesionToolStripMenuItem = new ToolStripMenuItem();
             iniciarSesiónToolStripMenuItem = new ToolStripMenuItem();
-            salirToolStripMenuItem = new ToolStripMenuItem();
             registrarseToolStripMenuItem = new ToolStripMenuItem();
+            salirToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -55,9 +55,16 @@
             // iniciarSesiónToolStripMenuItem
             // 
             iniciarSesiónToolStripMenuItem.Name = "iniciarSesiónToolStripMenuItem";
-            iniciarSesiónToolStripMenuItem.Size = new Size(180, 22);
+            iniciarSesiónToolStripMenuItem.Size = new Size(143, 22);
             iniciarSesiónToolStripMenuItem.Text = "Iniciar Sesión";
             iniciarSesiónToolStripMenuItem.Click += iniciarSesiónToolStripMenuItem_Click;
+            // 
+            // registrarseToolStripMenuItem
+            // 
+            registrarseToolStripMenuItem.Name = "registrarseToolStripMenuItem";
+            registrarseToolStripMenuItem.Size = new Size(143, 22);
+            registrarseToolStripMenuItem.Text = "Registrarse";
+            registrarseToolStripMenuItem.Click += registrarseToolStripMenuItem_Click;
             // 
             // salirToolStripMenuItem
             // 
@@ -65,13 +72,6 @@
             salirToolStripMenuItem.Size = new Size(41, 20);
             salirToolStripMenuItem.Text = "Salir";
             salirToolStripMenuItem.Click += salirToolStripMenuItem_Click;
-            // 
-            // registrarseToolStripMenuItem
-            // 
-            registrarseToolStripMenuItem.Name = "registrarseToolStripMenuItem";
-            registrarseToolStripMenuItem.Size = new Size(180, 22);
-            registrarseToolStripMenuItem.Text = "Registrarse";
-            registrarseToolStripMenuItem.Click += registrarseToolStripMenuItem_Click;
             // 
             // frmMenu
             // 
@@ -82,7 +82,7 @@
             IsMdiContainer = true;
             MainMenuStrip = menuStrip1;
             Name = "frmMenu";
-            Text = "frmMenu";
+            Text = "Menu";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ResumeLayout(false);

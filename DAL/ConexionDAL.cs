@@ -11,12 +11,8 @@ namespace DAL
     {
         private static ConexionDAL instancia;
         private static readonly object candado = new object();
-        private SqlConnection conexion;
         private string cadenaConexion = "Data Source=.;Initial Catalog=ProyectoCampo;Integrated Security=True;Trust Server Certificate=True";
-        private ConexionDAL()
-        {
-            conexion = new SqlConnection(cadenaConexion);
-        }
+        private ConexionDAL() { }
         public static ConexionDAL Instancia
         {
             get
@@ -33,18 +29,7 @@ namespace DAL
         }
         public SqlConnection ObtenerConexion()
         {
-            if (conexion.State == System.Data.ConnectionState.Closed)
-            {
-                conexion.Open();
-            }
-            return conexion;
-        }
-        public void CerrarConexion()
-        {
-            if (conexion != null && conexion.State == System.Data.ConnectionState.Open)
-            {
-                conexion.Close();
-            }
+            return new SqlConnection(cadenaConexion);
         }
     }
 }
