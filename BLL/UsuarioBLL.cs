@@ -36,6 +36,7 @@ namespace BLL
                 {
                     usuarioBD.IntentosFallidos = 0;
                     usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                    RegistrarCambioHistorico(usuarioBD, usuarioBD.ID, "Reinicio de intentos fallidos por login exitoso");
                 }
                 registroBLL.RegistrarEvento("Inicio de sesión del usuario: " + usuarioBD.Nombre, usuarioBD);
                 SessionManager.Instancia.Iniciar(usuarioBD);
@@ -48,12 +49,14 @@ namespace BLL
                 {
                     usuarioBD.Bloqueado = true;
                     usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                    RegistrarCambioHistorico(usuarioBD, usuarioBD.ID, "Bloqueo de cuenta por intentos fallidos");
                     registroBLL.RegistrarEvento($"Usuario <{usuarioBD.Nombre}> bloqueado por superar límite de intentos (3)", usuarioBD, "CRÍTICO");
                     throw new Exception("Su cuenta ha sido bloqueada tras 3 intentos fallidos.");
                 }
                 else
                 {
                     usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                    RegistrarCambioHistorico(usuarioBD, usuarioBD.ID, $"Intento fallido sumado (#{usuarioBD.IntentosFallidos})");
                     registroBLL.RegistrarEvento($"Intento de inicio de sesión fallido. Intento #{usuarioBD.IntentosFallidos}. Usuario: " + usuarioBD.Nombre, usuarioBD, "ALERTA");
                     int intentosRestantes = 3 - usuarioBD.IntentosFallidos;
                     throw new Exception($"Usuario o clave incorrectos. Le quedan {intentosRestantes} intento(s).");
@@ -69,6 +72,7 @@ namespace BLL
             SessionManager.Instancia.Cerrar();
         }
         public List<UsuarioBE> ListarTodos() => usuarioDAL.ListarTodos();
+        public List<UsuarioHistoricoBE> ObtenerHistorialUsuario(int idUsuario) => usuarioDAL.ListarHistorial(idUsuario);
         public void RegistrarUsuario(string nombre, string clavePlana)
         {
             if (usuarioDAL.ObtenerPorUsername(nombre) != null)
@@ -80,7 +84,52 @@ namespace BLL
             nuevoUsuario.Clave = CryptoManager.GenerarHash(clavePlana);
             usuarioDAL.CrearUsuario(nuevoUsuario);
             UsuarioBE usuarioCreado = usuarioDAL.ObtenerPorUsername(nombre);
+            RegistrarCambioHistorico(usuarioCreado, usuarioCreado.ID, "Creación de usuario");
             registroBLL.RegistrarEvento("Nuevo usuario registrado: " + nombre, usuarioCreado, "ALTA");
+        }
+        public void RestaurarEstadoUsuario(int idUsuario, int idCambioHistorico, UsuarioBE usuarioAutor)
+        {
+            var historial = usuarioDAL.ListarHistorial(idUsuario);
+            var versionARestaurar = historial.FirstOrDefault(h => h.ID_Cambio == idCambioHistorico);
+            if (versionARestaurar == null)
+                throw new Exception("No se encontró el estado histórico especificado.");
+            UsuarioBE usuarioActual = usuarioDAL.ObtenerPorID(idUsuario);
+            UsuarioMemento memento = new UsuarioMemento(
+                versionARestaurar.Nombre,
+                versionARestaurar.Clave,
+                versionARestaurar.IntentosFallidos,
+                versionARestaurar.Bloqueado
+            );
+            usuarioActual.RestaurarMemento(memento);
+            usuarioDAL.ActualizarUsuarioCompleto(usuarioActual);
+            UsuarioHistoricoBE nuevoRegistro = new UsuarioHistoricoBE
+            {
+                ID = usuarioActual.ID,
+                Nombre = usuarioActual.Nombre,
+                Clave = usuarioActual.Clave,
+                IntentosFallidos = usuarioActual.IntentosFallidos,
+                Bloqueado = usuarioActual.Bloqueado,
+                ID_Usuario_Autor = usuarioAutor.ID,
+                FechaHora = DateTime.Now,
+                Accion = $"Restauración a versión de fecha {versionARestaurar.FechaHora}"
+            };
+            usuarioDAL.GuardarEstadoHistorico(nuevoRegistro);
+            registroBLL.RegistrarEvento($"Restauración de estado del usuario {usuarioActual.Nombre}", usuarioAutor, "ALTA");
+        }
+        private void RegistrarCambioHistorico(UsuarioBE usuarioAfectado, int idAutor, string accion)
+        {
+            UsuarioHistoricoBE historico = new UsuarioHistoricoBE
+            {
+                ID = usuarioAfectado.ID,
+                Nombre = usuarioAfectado.Nombre,
+                Clave = usuarioAfectado.Clave,
+                IntentosFallidos = usuarioAfectado.IntentosFallidos,
+                Bloqueado = usuarioAfectado.Bloqueado,
+                ID_Usuario_Autor = idAutor,
+                FechaHora = DateTime.Now,
+                Accion = accion
+            };
+            usuarioDAL.GuardarEstadoHistorico(historico);
         }
     }
 }

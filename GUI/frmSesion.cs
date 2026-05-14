@@ -113,5 +113,16 @@ namespace GUI
                 CerrarSesion?.Invoke(this, EventArgs.Empty);
             }
         }
+        private void btnControlCambios_Click(object sender, EventArgs e)
+        {
+            frmControlCambios frmCambios = new frmControlCambios();
+            frmCambios.MdiParent = this.MdiParent;
+            frmCambios.FormClosed += (s, args) =>
+            {
+                this.Show();
+            };
+            this.Hide();
+            frmCambios.Show();
+        }
     }
 }

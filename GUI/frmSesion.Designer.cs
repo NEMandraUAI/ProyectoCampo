@@ -44,6 +44,7 @@
             cmbCriticidad = new ComboBox();
             dtpHasta = new DateTimePicker();
             dtpDesde = new DateTimePicker();
+            btnControlCambios = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvLogs).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -204,11 +205,22 @@
             dtpDesde.Size = new Size(276, 23);
             dtpDesde.TabIndex = 0;
             // 
+            // btnControlCambios
+            // 
+            btnControlCambios.Location = new Point(758, 544);
+            btnControlCambios.Name = "btnControlCambios";
+            btnControlCambios.Size = new Size(189, 39);
+            btnControlCambios.TabIndex = 4;
+            btnControlCambios.Text = "Control de Cambios";
+            btnControlCambios.UseVisualStyleBackColor = true;
+            btnControlCambios.Click += btnControlCambios_Click;
+            // 
             // frmSesion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(959, 544);
+            ClientSize = new Size(959, 595);
+            Controls.Add(btnControlCambios);
             Controls.Add(panel1);
             Controls.Add(dgvLogs);
             Controls.Add(btnCerrarSesion);
@@ -241,5 +253,6 @@
         private Label lblUsuarios;
         private Label lblDesde;
         private Button btnLimpiar;
+        private Button btnControlCambios;
     }
 }
