@@ -8,11 +8,17 @@ namespace BE
 {
     public class UsuarioBE
     {
+        [DigitoVerificador(1)]
         public int ID { get; set; }
+        [DigitoVerificador(2)]
         public string Nombre { get; set; }
+        [DigitoVerificador(3)]
         public string Clave { get; set; }
+        [DigitoVerificador(4)]
         public int IntentosFallidos { get; set; }
+        [DigitoVerificador(5)]
         public bool Bloqueado { get; set; }
+        public string DVH { get; set; }
         public UsuarioMemento CrearMemento()
         {
             return new UsuarioMemento(this.Nombre, this.Clave, this.IntentosFallidos, this.Bloqueado);

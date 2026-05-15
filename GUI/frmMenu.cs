@@ -21,12 +21,28 @@ namespace GUI
         }
         private void iniciarSesiónToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (SessionManager.Instancia.UsuarioActual != null)
+            BLL.IntegridadBLL integridadBLL = new BLL.IntegridadBLL();
+            // integridadBLL.ForzarRecalculoDeTodaLaBase(); 
+            // MessageBox.Show("Base de datos sincronizada correctamente.");
+            // return;
+            try
             {
-                MessageBox.Show("Ya existe una sesión activa. Debe cerrarla antes de ingresar con otra cuenta.", "Sesión Activa", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                integridadBLL.VerificarIntegridadSistema();
+                if (SessionManager.Instancia.UsuarioActual != null)
+                {
+                    MessageBox.Show("Ya existe una sesión activa. Debe cerrarla antes de ingresar con otra cuenta.", "Sesión Activa", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                AbrirLogin();
             }
-            AbrirLogin();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\nEl sistema se bloqueará por seguridad. Contacte al administrador.", "Corrupción de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                foreach (Form f in this.MdiChildren)
+                {
+                    f.Close();
+                }
+            }
         }
         private void AbrirLogin()
         {
@@ -52,7 +68,20 @@ namespace GUI
         }
         private void OnCerrarSesion(object sender, EventArgs e)
         {
-            AbrirLogin();
+            BLL.IntegridadBLL integridadBLL = new BLL.IntegridadBLL();
+            try
+            {
+                integridadBLL.VerificarIntegridadSistema();
+                AbrirLogin();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\nEl sistema se bloqueará por seguridad. Contacte al administrador.", "Corrupción de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                foreach (Form f in this.MdiChildren)
+                {
+                    f.Close();
+                }
+            }
         }
         private void salirToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -60,9 +89,22 @@ namespace GUI
         }
         private void registrarseToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmRegistro registro = new frmRegistro();
-            registro.MdiParent = this;
-            registro.Show();
+            BLL.IntegridadBLL integridadBLL = new BLL.IntegridadBLL();
+            try
+            {
+                integridadBLL.VerificarIntegridadSistema();
+                frmRegistro registro = new frmRegistro();
+                registro.MdiParent = this;
+                registro.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\nEl sistema se bloqueará por seguridad. Contacte al administrador.", "Corrupción de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                foreach (Form f in this.MdiChildren)
+                {
+                    f.Close();
+                }
+            }
         }
     }
 }

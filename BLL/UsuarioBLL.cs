@@ -13,6 +13,7 @@ namespace BLL
     {
         private UsuarioDAL usuarioDAL = new UsuarioDAL();
         private RegistroBLL registroBLL = new RegistroBLL();
+        private IntegridadBLL integridadBLL = new IntegridadBLL();
         public UsuarioBE IniciarSesion(string usuario, string clavePlana)
         {
             if (SessionManager.Instancia.UsuarioActual != null)
@@ -35,7 +36,9 @@ namespace BLL
                 if (usuarioBD.IntentosFallidos > 0)
                 {
                     usuarioBD.IntentosFallidos = 0;
+                    usuarioBD.DVH = DVManager.CalcularDVH(usuarioBD);
                     usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                    integridadBLL.ActualizarDVVGeneral();
                     RegistrarCambioHistorico(usuarioBD, usuarioBD.ID, "Reinicio de intentos fallidos por login exitoso");
                 }
                 registroBLL.RegistrarEvento("Inicio de sesión del usuario: " + usuarioBD.Nombre, usuarioBD);
@@ -48,14 +51,18 @@ namespace BLL
                 if (usuarioBD.IntentosFallidos >= 3)
                 {
                     usuarioBD.Bloqueado = true;
+                    usuarioBD.DVH = DVManager.CalcularDVH(usuarioBD);
                     usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                    integridadBLL.ActualizarDVVGeneral();
                     RegistrarCambioHistorico(usuarioBD, usuarioBD.ID, "Bloqueo de cuenta por intentos fallidos");
                     registroBLL.RegistrarEvento($"Usuario <{usuarioBD.Nombre}> bloqueado por superar límite de intentos (3)", usuarioBD, "CRÍTICO");
                     throw new Exception("Su cuenta ha sido bloqueada tras 3 intentos fallidos.");
                 }
                 else
                 {
+                    usuarioBD.DVH = DVManager.CalcularDVH(usuarioBD);
                     usuarioDAL.ActualizarEstadoUsuario(usuarioBD);
+                    integridadBLL.ActualizarDVVGeneral();
                     RegistrarCambioHistorico(usuarioBD, usuarioBD.ID, $"Intento fallido sumado (#{usuarioBD.IntentosFallidos})");
                     registroBLL.RegistrarEvento($"Intento de inicio de sesión fallido. Intento #{usuarioBD.IntentosFallidos}. Usuario: " + usuarioBD.Nombre, usuarioBD, "ALERTA");
                     int intentosRestantes = 3 - usuarioBD.IntentosFallidos;
@@ -82,7 +89,13 @@ namespace BLL
             UsuarioBE nuevoUsuario = new UsuarioBE();
             nuevoUsuario.Nombre = nombre;
             nuevoUsuario.Clave = CryptoManager.GenerarHash(clavePlana);
-            usuarioDAL.CrearUsuario(nuevoUsuario);
+            nuevoUsuario.IntentosFallidos = 0;
+            nuevoUsuario.Bloqueado = false;
+            int nuevoId = usuarioDAL.CrearUsuario(nuevoUsuario);
+            nuevoUsuario.ID = nuevoId;
+            nuevoUsuario.DVH = DVManager.CalcularDVH(nuevoUsuario);
+            usuarioDAL.ActualizarDVH(nuevoId, nuevoUsuario.DVH);
+            integridadBLL.ActualizarDVVGeneral();
             UsuarioBE usuarioCreado = usuarioDAL.ObtenerPorUsername(nombre);
             RegistrarCambioHistorico(usuarioCreado, usuarioCreado.ID, "Creación de usuario");
             registroBLL.RegistrarEvento("Nuevo usuario registrado: " + nombre, usuarioCreado, "ALTA");
@@ -101,7 +114,9 @@ namespace BLL
                 versionARestaurar.Bloqueado
             );
             usuarioActual.RestaurarMemento(memento);
+            usuarioActual.DVH = DVManager.CalcularDVH(usuarioActual);
             usuarioDAL.ActualizarUsuarioCompleto(usuarioActual);
+            integridadBLL.ActualizarDVVGeneral();
             UsuarioHistoricoBE nuevoRegistro = new UsuarioHistoricoBE
             {
                 ID = usuarioActual.ID,

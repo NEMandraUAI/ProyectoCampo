@@ -16,7 +16,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado FROM Usuario WHERE Nombre = @Nombre";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH FROM Usuario WHERE Nombre = @Nombre";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@Nombre", nombreUsuario);
@@ -30,6 +30,7 @@ namespace DAL
                             usuario.Clave = reader["Clave"].ToString();
                             usuario.IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]);
                             usuario.Bloqueado = Convert.ToBoolean(reader["Bloqueado"]);
+                            usuario.DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null;
                         }
                     }
                 }
@@ -41,11 +42,12 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "UPDATE Usuario SET IntentosFallidos = @Intentos, Bloqueado = @Bloqueado WHERE ID = @ID";
+                string consulta = "UPDATE Usuario SET IntentosFallidos = @Intentos, Bloqueado = @Bloqueado, DVH = @DVH WHERE ID = @ID";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@Intentos", usuario.IntentosFallidos);
                     cmd.Parameters.AddWithValue("@Bloqueado", usuario.Bloqueado);
+                    cmd.Parameters.AddWithValue("@DVH", (object)usuario.DVH ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@ID", usuario.ID);
                     cmd.ExecuteNonQuery();
                 }
@@ -57,7 +59,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre FROM Usuario";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH FROM Usuario";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -67,6 +69,10 @@ namespace DAL
                             UsuarioBE usuario = new UsuarioBE();
                             usuario.ID = Convert.ToInt32(reader["ID"]);
                             usuario.Nombre = reader["Nombre"].ToString();
+                            usuario.Clave = reader["Clave"].ToString();
+                            usuario.IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]);
+                            usuario.Bloqueado = Convert.ToBoolean(reader["Bloqueado"]);
+                            usuario.DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null;
                             lista.Add(usuario);
                         }
                     }
@@ -74,16 +80,32 @@ namespace DAL
             }
             return lista;
         }
-        public void CrearUsuario(UsuarioBE nuevoUsuario)
+        public int CrearUsuario(UsuarioBE nuevoUsuario)
         {
+            int nuevoID = 0;
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "INSERT INTO Usuario (Nombre, Clave, IntentosFallidos, Bloqueado) VALUES (@Nombre, @Clave, 0, 0)";
+                string consulta = "INSERT INTO Usuario (Nombre, Clave, IntentosFallidos, Bloqueado) VALUES (@Nombre, @Clave, 0, 0); SELECT SCOPE_IDENTITY();";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@Nombre", nuevoUsuario.Nombre);
                     cmd.Parameters.AddWithValue("@Clave", nuevoUsuario.Clave);
+                    nuevoID = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+            }
+            return nuevoID;
+        }
+        public void ActualizarDVH(int idUsuario, string dvh)
+        {
+            using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
+            {
+                cn.Open();
+                string consulta = "UPDATE Usuario SET DVH = @DVH WHERE ID = @ID";
+                using (SqlCommand cmd = new SqlCommand(consulta, cn))
+                {
+                    cmd.Parameters.AddWithValue("@DVH", dvh);
+                    cmd.Parameters.AddWithValue("@ID", idUsuario);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -94,7 +116,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado FROM Usuario WHERE ID = @ID";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH FROM Usuario WHERE ID = @ID";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@ID", idUsuario);
@@ -108,7 +130,8 @@ namespace DAL
                                 Nombre = reader["Nombre"].ToString(),
                                 Clave = reader["Clave"].ToString(),
                                 IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]),
-                                Bloqueado = Convert.ToBoolean(reader["Bloqueado"])
+                                Bloqueado = Convert.ToBoolean(reader["Bloqueado"]),
+                                DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null
                             };
                         }
                     }
@@ -138,6 +161,7 @@ namespace DAL
                 }
             }
         }
+
         public List<UsuarioHistoricoBE> ListarHistorial(int idUsuario)
         {
             List<UsuarioHistoricoBE> lista = new List<UsuarioHistoricoBE>();
@@ -145,9 +169,9 @@ namespace DAL
             {
                 cn.Open();
                 string consulta = @"SELECT h.*, u.Nombre AS NombreAutor 
-                                    FROM Usuario_Historico h
-                                    INNER JOIN Usuario u ON h.ID_Usuario_Autor = u.ID
-                                    WHERE h.ID_Usuario = @ID_Usuario ORDER BY h.FechaHora DESC";
+                                     FROM Usuario_Historico h
+                                     INNER JOIN Usuario u ON h.ID_Usuario_Autor = u.ID
+                                     WHERE h.ID_Usuario = @ID_Usuario ORDER BY h.FechaHora DESC";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@ID_Usuario", idUsuario);
@@ -183,7 +207,8 @@ namespace DAL
                                     SET Nombre = @Nombre, 
                                     Clave = @Clave, 
                                     IntentosFallidos = @Intentos, 
-                                    Bloqueado = @Bloqueado 
+                                    Bloqueado = @Bloqueado,
+                                    DVH = @DVH
                                     WHERE ID = @ID";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
@@ -191,6 +216,7 @@ namespace DAL
                     cmd.Parameters.AddWithValue("@Clave", usuario.Clave);
                     cmd.Parameters.AddWithValue("@Intentos", usuario.IntentosFallidos);
                     cmd.Parameters.AddWithValue("@Bloqueado", usuario.Bloqueado);
+                    cmd.Parameters.AddWithValue("@DVH", (object)usuario.DVH ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@ID", usuario.ID);
                     cmd.ExecuteNonQuery();
                 }
