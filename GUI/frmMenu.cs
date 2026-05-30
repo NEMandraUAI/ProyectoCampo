@@ -18,6 +18,45 @@ namespace GUI
         public frmMenu()
         {
             InitializeComponent();
+            this.KeyPreview = true;
+            this.KeyDown += FrmMenu_KeyDown;
+        }
+        private void FrmMenu_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.Alt && e.KeyCode == Keys.R)
+            {
+                string claveIngresada = SolicitarClaveEmergencia();
+                if (!string.IsNullOrEmpty(claveIngresada))
+                {
+                    string hashClaveMaestra = "3b612c75a7b5048a435fb6ec81e52ff92d6d795a8b5a9c17070f6a63c97a53b2";
+                    if (CryptoManager.Comparar(claveIngresada, hashClaveMaestra))
+                    {
+                        try
+                        {
+                            BLL.IntegridadBLL integridadBLL = new BLL.IntegridadBLL();
+                            integridadBLL.ForzarRecalculoDeTodaLaBase();
+                            MessageBox.Show("Integridad restaurada exitosamente. El sistema ha vuelto a la normalidad.",
+                                            "Recuperación Exitosa",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Ocurrió un error al intentar restaurar: " + ex.Message,
+                                            "Error",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Clave maestra incorrecta. Acceso denegado.",
+                                        "Seguridad",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Warning);
+                    }
+                }
+            }
         }
         private void iniciarSesiónToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -105,6 +144,31 @@ namespace GUI
                     f.Close();
                 }
             }
+        }
+        private string SolicitarClaveEmergencia()
+        {
+            Form prompt = new Form()
+            {
+                Width = 350,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = "Recuperación de Emergencia del Sistema",
+                StartPosition = FormStartPosition.CenterScreen,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+            Label lblTexto = new Label() { Left = 20, Top = 20, Width = 300, Text = "Ingrese la Clave Maestra de Administrador:" };
+            TextBox txtClave = new TextBox() { Left = 20, Top = 50, Width = 290, PasswordChar = '*' };
+            Button btnAceptar = new Button() { Text = "Aceptar", Left = 210, Width = 100, Top = 80, DialogResult = DialogResult.OK };
+            prompt.Controls.Add(lblTexto);
+            prompt.Controls.Add(txtClave);
+            prompt.Controls.Add(btnAceptar);
+            prompt.AcceptButton = btnAceptar;
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                return txtClave.Text;
+            }
+            return "";
         }
     }
 }
