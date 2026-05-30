@@ -45,6 +45,7 @@
             dtpHasta = new DateTimePicker();
             dtpDesde = new DateTimePicker();
             btnControlCambios = new Button();
+            btnGestionRoles = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvLogs).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -215,11 +216,22 @@
             btnControlCambios.UseVisualStyleBackColor = true;
             btnControlCambios.Click += btnControlCambios_Click;
             // 
+            // btnGestionRoles
+            // 
+            btnGestionRoles.Location = new Point(563, 544);
+            btnGestionRoles.Name = "btnGestionRoles";
+            btnGestionRoles.Size = new Size(189, 39);
+            btnGestionRoles.TabIndex = 5;
+            btnGestionRoles.Text = "Gestionar Roles";
+            btnGestionRoles.UseVisualStyleBackColor = true;
+            btnGestionRoles.Click += btnGestionRoles_Click;
+            // 
             // frmSesion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(959, 595);
+            Controls.Add(btnGestionRoles);
             Controls.Add(btnControlCambios);
             Controls.Add(panel1);
             Controls.Add(dgvLogs);
@@ -254,5 +266,6 @@
         private Label lblDesde;
         private Button btnLimpiar;
         private Button btnControlCambios;
+        private Button btnGestionRoles;
     }
 }

@@ -124,5 +124,16 @@ namespace GUI
             this.Hide();
             frmCambios.Show();
         }
+        private void btnGestionRoles_Click(object sender, EventArgs e)
+        {
+            frmGestionRoles frmGestion = new frmGestionRoles();
+            frmGestion.MdiParent = this.MdiParent;
+            frmGestion.FormClosed += (s, args) =>
+            {
+                this.Show();
+            };
+            this.Hide();
+            frmGestion.Show();
+        }
     }
 }

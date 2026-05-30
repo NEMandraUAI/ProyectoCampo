@@ -93,6 +93,14 @@ namespace BLL
             nuevoUsuario.Bloqueado = false;
             int nuevoId = usuarioDAL.CrearUsuario(nuevoUsuario);
             nuevoUsuario.ID = nuevoId;
+            PermisoBLL permisoBLL = new PermisoBLL();
+            var catalogo = permisoBLL.ObtenerArbolCompleto();
+            var rolSimple = catalogo.FirstOrDefault(x => x.Nombre.ToUpper() == "USUARIO SIMPLE");
+            if (rolSimple != null)
+            {
+                nuevoUsuario.Permisos.Add(rolSimple);
+                permisoBLL.ActualizarPermisosUsuario(nuevoUsuario);
+            }
             nuevoUsuario.DVH = DVManager.CalcularDVH(nuevoUsuario);
             usuarioDAL.ActualizarDVH(nuevoId, nuevoUsuario.DVH);
             integridadBLL.ActualizarDVVGeneral();
