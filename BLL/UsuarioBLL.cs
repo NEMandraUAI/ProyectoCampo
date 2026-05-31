@@ -41,6 +41,8 @@ namespace BLL
                     integridadBLL.ActualizarDVVGeneral();
                     RegistrarCambioHistorico(usuarioBD, usuarioBD.ID, "Reinicio de intentos fallidos por login exitoso");
                 }
+                PermisoBLL permisoBLL = new PermisoBLL();
+                permisoBLL.LlenarPermisosDeUsuario(usuarioBD);
                 registroBLL.RegistrarEvento("Inicio de sesión del usuario: " + usuarioBD.Nombre, usuarioBD);
                 SessionManager.Instancia.Iniciar(usuarioBD);
                 return usuarioBD;

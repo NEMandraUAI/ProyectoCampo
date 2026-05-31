@@ -35,6 +35,10 @@ namespace GUI
             dtpDesde.Value = DateTime.Now.AddDays(-7);
             dtpHasta.Value = DateTime.Now;
             EjecutarFiltro();
+            btnGestionRoles.Visible = usuarioActual.TienePermiso("GESTION_ROLES");
+            btnControlCambios.Visible = usuarioActual.TienePermiso("CONTROL_BITACORA");
+            panel1.Visible = usuarioActual.TienePermiso("CONTROL_BITACORA");
+            dgvLogs.Visible = usuarioActual.TienePermiso("CONTROL_BITACORA");
         }
         private void ConfigurarGrilla()
         {

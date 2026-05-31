@@ -35,13 +35,17 @@
             btnEliminarFamilia = new Button();
             btnAsignarRolUsuario = new Button();
             btnQuitarRolUsuario = new Button();
+            btnAsignarPermisoARol = new Button();
+            btnCrearRolAnidado = new Button();
+            tvPermisosDisponibles = new TreeView();
             SuspendLayout();
             // 
             // tvRoles
             // 
+            tvRoles.HideSelection = false;
             tvRoles.Location = new Point(12, 12);
             tvRoles.Name = "tvRoles";
-            tvRoles.Size = new Size(322, 426);
+            tvRoles.Size = new Size(322, 314);
             tvRoles.TabIndex = 0;
             // 
             // cmbUsuarios
@@ -57,7 +61,7 @@
             // 
             tvPermisosUsuario.Location = new Point(553, 12);
             tvPermisosUsuario.Name = "tvPermisosUsuario";
-            tvPermisosUsuario.Size = new Size(322, 426);
+            tvPermisosUsuario.Size = new Size(322, 314);
             tvPermisosUsuario.TabIndex = 2;
             // 
             // btnCrearFamilia
@@ -66,23 +70,23 @@
             btnCrearFamilia.Name = "btnCrearFamilia";
             btnCrearFamilia.Size = new Size(142, 52);
             btnCrearFamilia.TabIndex = 3;
-            btnCrearFamilia.Text = "Crear Familia";
+            btnCrearFamilia.Text = "Crear Rol";
             btnCrearFamilia.UseVisualStyleBackColor = true;
             btnCrearFamilia.Click += btnCrearFamilia_Click;
             // 
             // btnEliminarFamilia
             // 
-            btnEliminarFamilia.Location = new Point(373, 158);
+            btnEliminarFamilia.Location = new Point(373, 216);
             btnEliminarFamilia.Name = "btnEliminarFamilia";
             btnEliminarFamilia.Size = new Size(142, 52);
             btnEliminarFamilia.TabIndex = 5;
-            btnEliminarFamilia.Text = "Eliminar Familia";
+            btnEliminarFamilia.Text = "Eliminar Rol";
             btnEliminarFamilia.UseVisualStyleBackColor = true;
             btnEliminarFamilia.Click += btnEliminarFamilia_Click;
             // 
             // btnAsignarRolUsuario
             // 
-            btnAsignarRolUsuario.Location = new Point(373, 216);
+            btnAsignarRolUsuario.Location = new Point(373, 274);
             btnAsignarRolUsuario.Name = "btnAsignarRolUsuario";
             btnAsignarRolUsuario.Size = new Size(142, 52);
             btnAsignarRolUsuario.TabIndex = 6;
@@ -92,7 +96,7 @@
             // 
             // btnQuitarRolUsuario
             // 
-            btnQuitarRolUsuario.Location = new Point(373, 274);
+            btnQuitarRolUsuario.Location = new Point(373, 332);
             btnQuitarRolUsuario.Name = "btnQuitarRolUsuario";
             btnQuitarRolUsuario.Size = new Size(142, 52);
             btnQuitarRolUsuario.TabIndex = 7;
@@ -100,11 +104,42 @@
             btnQuitarRolUsuario.UseVisualStyleBackColor = true;
             btnQuitarRolUsuario.Click += btnQuitarRolUsuario_Click;
             // 
+            // btnAsignarPermisoARol
+            // 
+            btnAsignarPermisoARol.Location = new Point(373, 390);
+            btnAsignarPermisoARol.Name = "btnAsignarPermisoARol";
+            btnAsignarPermisoARol.Size = new Size(142, 52);
+            btnAsignarPermisoARol.TabIndex = 9;
+            btnAsignarPermisoARol.Text = "Asignar Permiso a Rol";
+            btnAsignarPermisoARol.UseVisualStyleBackColor = true;
+            btnAsignarPermisoARol.Click += btnAsignarPatenteARol_Click;
+            // 
+            // btnCrearRolAnidado
+            // 
+            btnCrearRolAnidado.Location = new Point(373, 158);
+            btnCrearRolAnidado.Name = "btnCrearRolAnidado";
+            btnCrearRolAnidado.Size = new Size(142, 52);
+            btnCrearRolAnidado.TabIndex = 10;
+            btnCrearRolAnidado.Text = "Crear Rol Anidado";
+            btnCrearRolAnidado.UseVisualStyleBackColor = true;
+            btnCrearRolAnidado.Click += btnCrearRolAnidado_Click;
+            // 
+            // tvPermisosDisponibles
+            // 
+            tvPermisosDisponibles.HideSelection = false;
+            tvPermisosDisponibles.Location = new Point(12, 332);
+            tvPermisosDisponibles.Name = "tvPermisosDisponibles";
+            tvPermisosDisponibles.Size = new Size(322, 314);
+            tvPermisosDisponibles.TabIndex = 11;
+            // 
             // frmGestionRoles
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(907, 450);
+            ClientSize = new Size(907, 654);
+            Controls.Add(tvPermisosDisponibles);
+            Controls.Add(btnCrearRolAnidado);
+            Controls.Add(btnAsignarPermisoARol);
             Controls.Add(btnQuitarRolUsuario);
             Controls.Add(btnAsignarRolUsuario);
             Controls.Add(btnEliminarFamilia);
@@ -127,5 +162,9 @@
         private Button btnEliminarFamilia;
         private Button btnAsignarRolUsuario;
         private Button btnQuitarRolUsuario;
+        private ListBox lstPatentes;
+        private Button btnAsignarPermisoARol;
+        private Button btnCrearRolAnidado;
+        private TreeView tvPermisosDisponibles;
     }
 }

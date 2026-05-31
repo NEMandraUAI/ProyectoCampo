@@ -31,5 +31,34 @@ namespace BE
             this.IntentosFallidos = memento.IntentosFallidos;
             this.Bloqueado = memento.Bloqueado;
         }
+        public bool TienePermiso(string codigoPermiso)
+        {
+            if (Permisos == null) return false;
+
+            foreach (var componente in Permisos)
+            {
+                if (EvaluarPermisoRecursivo(componente, codigoPermiso))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private bool EvaluarPermisoRecursivo(ComponentePermiso componente, string codigoPermiso)
+        {
+            if (!string.IsNullOrEmpty(componente.PermisoCodigo) &&
+                componente.PermisoCodigo.Equals(codigoPermiso, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            foreach (var hijo in componente.ObtenerHijos())
+            {
+                if (EvaluarPermisoRecursivo(hijo, codigoPermiso))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

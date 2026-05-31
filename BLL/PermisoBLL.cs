@@ -90,5 +90,25 @@ namespace BLL
             var permisosBD = permisoDAL.ObtenerPermisosDeUsuario(usuario.ID, catalogo);
             usuario.Permisos = permisosBD;
         }
+        public List<PatenteBE> ObtenerTodasLasPatentes()
+        {
+            var componentes = ObtenerArbolCompleto();
+            var patentes = new List<PatenteBE>();
+            foreach (var c in componentes)
+            {
+                if (c is PatenteBE patente)
+                {
+                    patentes.Add(patente);
+                }
+            }
+            return patentes;
+        }
+        public void CrearRolDentroDeRol(FamiliaBE padre, string nombreNuevoRol)
+        {
+            FamiliaBE nuevoHijo = new FamiliaBE { Nombre = nombreNuevoRol };
+            GuardarFamiliaCompleta(nuevoHijo);
+            padre.AgregarHijo(nuevoHijo);
+            GuardarFamiliaCompleta(padre);
+        }
     }
 }
