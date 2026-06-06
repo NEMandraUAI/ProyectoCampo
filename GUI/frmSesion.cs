@@ -35,6 +35,16 @@ namespace GUI
             dtpDesde.Value = DateTime.Now.AddDays(-7);
             dtpHasta.Value = DateTime.Now;
             EjecutarFiltro();
+            SessionManager.Instancia.PermisosActualizados += SessionManager_PermisosActualizados;
+            AplicarPermisosVisuales();
+        }
+        private void SessionManager_PermisosActualizados(object sender, EventArgs e)
+        {
+            usuarioActual = SessionManager.Instancia.UsuarioActual;
+            AplicarPermisosVisuales();
+        }
+        private void AplicarPermisosVisuales()
+        {
             btnGestionRoles.Visible = usuarioActual.TienePermiso("GESTION_ROLES");
             btnControlCambios.Visible = usuarioActual.TienePermiso("CONTROL_BITACORA");
             panel1.Visible = usuarioActual.TienePermiso("CONTROL_BITACORA");
@@ -113,6 +123,7 @@ namespace GUI
         {
             if (SessionManager.Instancia.UsuarioActual != null)
             {
+                SessionManager.Instancia.PermisosActualizados -= SessionManager_PermisosActualizados;
                 usuarioBLL.CerrarSesion();
                 MessageBox.Show("La sesión se cerró correctamente.", "Sesión Cerrada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 CerrarSesion?.Invoke(this, EventArgs.Empty);

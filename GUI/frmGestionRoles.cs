@@ -1,5 +1,6 @@
 ﻿using BE;
 using BLL;
+using Seguridad;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,9 +30,34 @@ namespace GUI
         }
         private void CargarArbolRoles()
         {
+            var arbolEstructural = permisoBLL.ObtenerArbolJerarquicoVisual();
+            LlenarTreeView(tvRoles, arbolEstructural);
             listaArbolCompleto = permisoBLL.ObtenerArbolCompleto();
-            LlenarTreeView(tvRoles, listaArbolCompleto);
-            LlenarTreeView(tvPermisosDisponibles, listaArbolCompleto);
+            CargarCatalogoPermisosDisponibles();
+        }
+        private void CargarCatalogoPermisosDisponibles()
+        {
+            tvPermisosDisponibles.Nodes.Clear();
+            TreeNode nodoRoles = new TreeNode("ROLES (Familias)") { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
+            TreeNode nodoPatentes = new TreeNode("PERMISOS SIMPLES (Patentes)") { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
+            foreach (var comp in listaArbolCompleto)
+            {
+                TreeNode nodo = new TreeNode(comp.Nombre);
+                nodo.Tag = comp;
+                if (comp is FamiliaBE)
+                {
+                    nodo.ForeColor = Color.Blue;
+                    nodoRoles.Nodes.Add(nodo);
+                }
+                else
+                {
+                    nodo.ForeColor = Color.DarkGreen;
+                    nodoPatentes.Nodes.Add(nodo);
+                }
+            }
+            tvPermisosDisponibles.Nodes.Add(nodoRoles);
+            tvPermisosDisponibles.Nodes.Add(nodoPatentes);
+            tvPermisosDisponibles.ExpandAll();
         }
         private void LlenarTreeView(TreeView tv, List<ComponentePermiso> catalogo)
         {
@@ -134,6 +160,7 @@ namespace GUI
                     {
                         permisoBLL.ActualizarPermisosUsuario(user);
                         cmbUsuarios_SelectedIndexChanged(null, null);
+                        NotificarPosibleCambioEnUsuarioActual();
                     }
                     catch (Exception ex) { MessageBox.Show(ex.Message); }
                 }
@@ -153,6 +180,7 @@ namespace GUI
                     {
                         permisoBLL.ActualizarPermisosUsuario(user);
                         cmbUsuarios_SelectedIndexChanged(null, null);
+                        NotificarPosibleCambioEnUsuarioActual();
                     }
                     catch (Exception ex)
                     {
@@ -169,6 +197,11 @@ namespace GUI
                 MessageBox.Show("Debe seleccionar un rol destino en el panel izquierdo y un permiso/rol origen en el panel derecho.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            if (tvPermisosDisponibles.SelectedNode.Tag == null)
+            {
+                MessageBox.Show("Por favor, expanda las carpetas y seleccione un permiso individual.", "Acción Denegada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
             ComponentePermiso destino = (ComponentePermiso)tvRoles.SelectedNode.Tag;
             ComponentePermiso origen = (ComponentePermiso)tvPermisosDisponibles.SelectedNode.Tag;
             if (destino is PatenteBE)
@@ -182,6 +215,7 @@ namespace GUI
                 familiaDestino.AgregarHijo(origen);
                 permisoBLL.GuardarFamiliaCompleta(familiaDestino);
                 CargarArbolRoles();
+                NotificarPosibleCambioEnUsuarioActual();
                 MessageBox.Show($"El permiso/rol '{origen.Nombre}' se asignó correctamente a '{familiaDestino.Nombre}'.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -211,12 +245,22 @@ namespace GUI
                 {
                     permisoBLL.CrearRolDentroDeRol(familiaPadre, nombreNuevoRol);
                     CargarArbolRoles();
+                    NotificarPosibleCambioEnUsuarioActual();
                     MessageBox.Show("Sub-rol creado y asignado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+        }
+        private void NotificarPosibleCambioEnUsuarioActual()
+        {
+            if (SessionManager.Instancia.UsuarioActual != null)
+            {
+                UsuarioBE usuarioLogueado = SessionManager.Instancia.UsuarioActual;
+                permisoBLL.LlenarPermisosDeUsuario(usuarioLogueado);
+                SessionManager.Instancia.ActualizarUsuarioEnSesion(usuarioLogueado);
             }
         }
     }

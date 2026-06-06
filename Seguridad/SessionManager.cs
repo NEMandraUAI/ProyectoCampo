@@ -7,6 +7,7 @@ namespace Seguridad
 {
     public class SessionManager
     {
+        public event EventHandler PermisosActualizados;
         private static SessionManager _instancia;
         private static readonly object candado = new object();
         public UsuarioBE UsuarioActual { get; private set; }
@@ -32,6 +33,11 @@ namespace Seguridad
         public void Cerrar()
         {
             UsuarioActual = null;
+        }
+        public void ActualizarUsuarioEnSesion(UsuarioBE usuarioActualizado)
+        {
+            UsuarioActual = usuarioActualizado;
+            PermisosActualizados?.Invoke(this, EventArgs.Empty);
         }
     }
 }

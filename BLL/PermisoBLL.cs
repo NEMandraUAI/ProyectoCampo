@@ -33,6 +33,22 @@ namespace BLL
             }
             return catalogo;
         }
+        public List<ComponentePermiso> ObtenerArbolJerarquicoVisual()
+        {
+            var catalogo = ObtenerArbolCompleto();
+            var todosLosHijos = new HashSet<int>();
+            foreach (var comp in catalogo)
+            {
+                if (comp is FamiliaBE familia)
+                {
+                    foreach (var hijo in familia.ObtenerHijos())
+                    {
+                        todosLosHijos.Add(hijo.ID);
+                    }
+                }
+            }
+            return catalogo.Where(c => !todosLosHijos.Contains(c.ID)).ToList();
+        }
         public void GuardarFamiliaCompleta(FamiliaBE familia)
         {
             if (familia.Nombre.Trim().ToUpper() == "ADMINISTRADOR" || familia.Nombre.Trim().ToUpper() == "USUARIO SIMPLE")
