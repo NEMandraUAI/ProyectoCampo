@@ -117,6 +117,13 @@ namespace BLL
             if (versionARestaurar == null)
                 throw new Exception("No se encontró el estado histórico especificado.");
             UsuarioBE usuarioActual = usuarioDAL.ObtenerPorID(idUsuario);
+            if (usuarioActual.Nombre == versionARestaurar.Nombre &&
+                usuarioActual.Clave == versionARestaurar.Clave &&
+                usuarioActual.IntentosFallidos == versionARestaurar.IntentosFallidos &&
+                usuarioActual.Bloqueado == versionARestaurar.Bloqueado)
+            {
+                throw new Exception("El estado histórico seleccionado es idéntico al estado actual del usuario. No se puede realizar una restauración redundante.");
+            }
             UsuarioMemento memento = new UsuarioMemento(
                 versionARestaurar.Nombre,
                 versionARestaurar.Clave,
