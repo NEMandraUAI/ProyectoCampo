@@ -39,6 +39,7 @@ namespace GUI
             btnControlCambios.Visible = usuarioActual.TienePermiso("CONTROL_BITACORA");
             panel1.Visible = usuarioActual.TienePermiso("CONTROL_BITACORA");
             dgvLogs.Visible = usuarioActual.TienePermiso("CONTROL_BITACORA");
+            btnBackup.Visible = usuarioActual.TienePermiso("REALIZAR_BACKUP");
         }
         private void ConfigurarGrilla()
         {
@@ -138,6 +139,26 @@ namespace GUI
             };
             this.Hide();
             frmGestion.Show();
+        }
+        private void btnBackup_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Archivos de Backup SQL (*.bak)|*.bak";
+            sfd.Title = "Guardar Copia de Seguridad";
+            sfd.FileName = $"ProyectoCampo_Backup_{DateTime.Now:yyyyMMdd_HHmmss}.bak";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    BackupBLL backupBLL = new BackupBLL();
+                    backupBLL.RealizarBackup(sfd.FileName);
+                    MessageBox.Show("Copia de seguridad generada y almacenada con éxito.", "Backup Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al generar el backup: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }

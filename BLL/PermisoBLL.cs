@@ -47,6 +47,10 @@ namespace BLL
             }
             foreach (var hijo in familia.ObtenerHijos())
             {
+                if (hijo.PermisoCodigo == "REALIZAR_BACKUP")
+                {
+                    throw new Exception("Violación de Privilegios: La patente de Backup es exclusiva del Administrador. No puede ser delegada ni incluida en el rol '" + familia.Nombre + "'.");
+                }
                 if (ExisteReferenciaCircular(hijo, familia.ID))
                     throw new Exception($"Error de Referencia Circular detectado al intentar agregar {hijo.Nombre} a {familia.Nombre}.");
                 permisoDAL.GuardarRelacionFamiliaPermiso(familia.ID, hijo.ID);
@@ -81,6 +85,10 @@ namespace BLL
             permisoDAL.LimpiarPermisosUsuario(usuario.ID);
             foreach (var permiso in usuario.Permisos)
             {
+                if (permiso.PermisoCodigo == "REALIZAR_BACKUP")
+                {
+                    throw new Exception("Violación de Privilegios: La patente de Backup se hereda automáticamente al poseer el rol Administrador. Está estrictamente prohibido asignarla como un permiso suelto a un usuario.");
+                }
                 permisoDAL.AsignarPermisoUsuario(usuario.ID, permiso.ID);
             }
         }

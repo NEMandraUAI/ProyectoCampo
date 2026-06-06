@@ -46,6 +46,7 @@
             dtpDesde = new DateTimePicker();
             btnControlCambios = new Button();
             btnGestionRoles = new Button();
+            btnBackup = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvLogs).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -226,11 +227,22 @@
             btnGestionRoles.UseVisualStyleBackColor = true;
             btnGestionRoles.Click += btnGestionRoles_Click;
             // 
+            // btnBackup
+            // 
+            btnBackup.Location = new Point(368, 544);
+            btnBackup.Name = "btnBackup";
+            btnBackup.Size = new Size(189, 39);
+            btnBackup.TabIndex = 6;
+            btnBackup.Text = "Generar Respaldo";
+            btnBackup.UseVisualStyleBackColor = true;
+            btnBackup.Click += btnBackup_Click;
+            // 
             // frmSesion
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(959, 595);
+            Controls.Add(btnBackup);
             Controls.Add(btnGestionRoles);
             Controls.Add(btnControlCambios);
             Controls.Add(panel1);
@@ -267,5 +279,6 @@
         private Button btnLimpiar;
         private Button btnControlCambios;
         private Button btnGestionRoles;
+        private Button btnBackup;
     }
 }

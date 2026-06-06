@@ -31,21 +31,57 @@ namespace GUI
                     string hashClaveMaestra = "3b612c75a7b5048a435fb6ec81e52ff92d6d795a8b5a9c17070f6a63c97a53b2";
                     if (CryptoManager.Comparar(claveIngresada, hashClaveMaestra))
                     {
-                        try
+                        DialogResult opcion = MessageBox.Show(
+                        "Autenticación Maestra correcta.\n\n" +
+                        "¿Desea RECALCULAR toda la estructura de dígitos (SÍ) " +
+                        "o RESTAURAR un archivo de Backup (NO)?\n\n" +
+                        "Presione Cancelar para abortar la operación.",
+                        "Opciones de Recuperación de Emergencia",
+                        MessageBoxButtons.YesNoCancel,
+                        MessageBoxIcon.Question);
+                        if (opcion == DialogResult.Yes)
                         {
-                            BLL.IntegridadBLL integridadBLL = new BLL.IntegridadBLL();
-                            integridadBLL.ForzarRecalculoDeTodaLaBase();
-                            MessageBox.Show("Integridad restaurada exitosamente. El sistema ha vuelto a la normalidad.",
-                                            "Recuperación Exitosa",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Information);
+                            try
+                            {
+                                BLL.IntegridadBLL integridadBLL = new BLL.IntegridadBLL();
+                                integridadBLL.ForzarRecalculoDeTodaLaBase();
+                                MessageBox.Show("Integridad restaurada exitosamente. Los dígitos verificadores han sido recalculados.",
+                                                "Recuperación Exitosa",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Information);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("Ocurrió un error al intentar recalcular: " + ex.Message,
+                                                "Error Crítico",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Error);
+                            }
                         }
-                        catch (Exception ex)
+                        else if (opcion == DialogResult.No)
                         {
-                            MessageBox.Show("Ocurrió un error al intentar restaurar: " + ex.Message,
-                                            "Error",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Error);
+                            OpenFileDialog ofd = new OpenFileDialog();
+                            ofd.Filter = "Archivos de Backup SQL (*.bak)|*.bak";
+                            ofd.Title = "Seleccione el archivo de respaldo para restaurar";
+                            if (ofd.ShowDialog() == DialogResult.OK)
+                            {
+                                try
+                                {
+                                    BLL.BackupBLL backupBLL = new BLL.BackupBLL();
+                                    backupBLL.RestaurarBackup(ofd.FileName);
+                                    MessageBox.Show("El sistema se ha restaurado correctamente al punto en el tiempo seleccionado. Por favor, inicie sesión nuevamente.",
+                                                    "Restauración Exitosa",
+                                                    MessageBoxButtons.OK,
+                                                    MessageBoxIcon.Information);
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show("Ocurrió un error al intentar restaurar la base de datos: " + ex.Message,
+                                                    "Error Crítico",
+                                                    MessageBoxButtons.OK,
+                                                    MessageBoxIcon.Error);
+                                }
+                            }
                         }
                     }
                     else
