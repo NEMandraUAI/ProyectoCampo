@@ -33,7 +33,11 @@
             iniciarSesiónToolStripMenuItem = new ToolStripMenuItem();
             registrarseToolStripMenuItem = new ToolStripMenuItem();
             salirToolStripMenuItem = new ToolStripMenuItem();
+            cmbIdiomas = new ComboBox();
+            btnNuevoIdioma = new Button();
+            panelIdioma = new Panel();
             menuStrip1.SuspendLayout();
+            panelIdioma.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -73,18 +77,53 @@
             salirToolStripMenuItem.Text = "Salir";
             salirToolStripMenuItem.Click += salirToolStripMenuItem_Click;
             // 
+            // cmbIdiomas
+            // 
+            cmbIdiomas.Anchor = AnchorStyles.None;
+            cmbIdiomas.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbIdiomas.FormattingEnabled = true;
+            cmbIdiomas.Location = new Point(3, 3);
+            cmbIdiomas.Name = "cmbIdiomas";
+            cmbIdiomas.Size = new Size(170, 23);
+            cmbIdiomas.TabIndex = 2;
+            cmbIdiomas.SelectedIndexChanged += cmbIdiomas_SelectedIndexChanged;
+            // 
+            // btnNuevoIdioma
+            // 
+            btnNuevoIdioma.Anchor = AnchorStyles.None;
+            btnNuevoIdioma.Location = new Point(3, 32);
+            btnNuevoIdioma.Name = "btnNuevoIdioma";
+            btnNuevoIdioma.Size = new Size(170, 42);
+            btnNuevoIdioma.TabIndex = 4;
+            btnNuevoIdioma.Text = "Nuevo Idioma";
+            btnNuevoIdioma.UseVisualStyleBackColor = true;
+            btnNuevoIdioma.Click += btnNuevoIdioma_Click;
+            // 
+            // panelIdioma
+            // 
+            panelIdioma.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            panelIdioma.Controls.Add(cmbIdiomas);
+            panelIdioma.Controls.Add(btnNuevoIdioma);
+            panelIdioma.Location = new Point(612, 27);
+            panelIdioma.Name = "panelIdioma";
+            panelIdioma.Size = new Size(176, 79);
+            panelIdioma.TabIndex = 6;
+            // 
             // frmMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(panelIdioma);
             Controls.Add(menuStrip1);
             IsMdiContainer = true;
             MainMenuStrip = menuStrip1;
             Name = "frmMenu";
             Text = "Menu";
+            Load += frmMenu_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            panelIdioma.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -96,5 +135,8 @@
         private ToolStripMenuItem iniciarSesiónToolStripMenuItem;
         private ToolStripMenuItem salirToolStripMenuItem;
         private ToolStripMenuItem registrarseToolStripMenuItem;
+        private ComboBox cmbIdiomas;
+        private Button btnNuevoIdioma;
+        private Panel panelIdioma;
     }
 }

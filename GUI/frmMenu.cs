@@ -1,4 +1,5 @@
 ﻿using BE;
+using BLL;
 using GUI.Eventos;
 using Seguridad;
 using System;
@@ -13,13 +14,14 @@ using System.Windows.Forms;
 
 namespace GUI
 {
-    public partial class frmMenu : Form
+    public partial class frmMenu : Form, IObserverIdioma
     {
         public frmMenu()
         {
             InitializeComponent();
             this.KeyPreview = true;
             this.KeyDown += FrmMenu_KeyDown;
+            GestorIdioma.Instancia.Suscribir(this);
         }
         private void FrmMenu_KeyDown(object sender, KeyEventArgs e)
         {
@@ -205,6 +207,100 @@ namespace GUI
                 return txtClave.Text;
             }
             return "";
+        }
+        private void frmMenu_Load(object sender, EventArgs e)
+        {
+            IdiomaBLL idiomaBLL = new IdiomaBLL();
+            cmbIdiomas.SelectedIndexChanged -= cmbIdiomas_SelectedIndexChanged;
+            cmbIdiomas.DataSource = idiomaBLL.ObtenerIdiomas();
+            cmbIdiomas.DisplayMember = "Nombre";
+            cmbIdiomas.ValueMember = "ID";
+            cmbIdiomas.SelectedValue = GestorIdioma.Instancia.IdiomaActual.ID;
+            cmbIdiomas.SelectedIndexChanged += cmbIdiomas_SelectedIndexChanged;
+            ActualizarIdioma(GestorIdioma.Instancia.IdiomaActual);
+        }
+        public void ActualizarIdioma(IdiomaBE idioma)
+        {
+            IdiomaBLL idiomaBLL = new IdiomaBLL();
+            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (traducciones.ContainsKey(this.Name))
+                this.Text = traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, traducciones);
+            cmbIdiomas.SelectedIndexChanged -= cmbIdiomas_SelectedIndexChanged;
+            cmbIdiomas.SelectedValue = idioma.ID;
+            cmbIdiomas.SelectedIndexChanged += cmbIdiomas_SelectedIndexChanged;
+        }
+        private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
+        {
+            foreach (Control control in controles)
+            {
+                if (traducciones.ContainsKey(control.Name))
+                {
+                    control.Text = traducciones[control.Name];
+                }
+                if (control is MenuStrip menuStrip)
+                {
+                    foreach (ToolStripItem item in menuStrip.Items)
+                    {
+                        TraducirItemMenu(item, traducciones);
+                    }
+                }
+                if (control.HasChildren)
+                {
+                    TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+            }
+        }
+        private void TraducirItemMenu(ToolStripItem item, Dictionary<string, string> traducciones)
+        {
+            if (traducciones.ContainsKey(item.Name))
+            {
+                item.Text = traducciones[item.Name];
+            }
+            if (item is ToolStripMenuItem menuItem)
+            {
+                foreach (ToolStripItem subItem in menuItem.DropDownItems)
+                {
+                    TraducirItemMenu(subItem, traducciones);
+                }
+            }
+        }
+        private void cmbIdiomas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbIdiomas.SelectedItem is IdiomaBE idiomaSeleccionado)
+            {
+                if (GestorIdioma.Instancia.IdiomaActual != null && GestorIdioma.Instancia.IdiomaActual.ID == idiomaSeleccionado.ID)
+                {
+                    return;
+                }
+                GestorIdioma.Instancia.CambiarIdioma(idiomaSeleccionado);
+                if (SessionManager.Instancia.UsuarioActual != null)
+                {
+                    UsuarioBE usuarioActual = SessionManager.Instancia.UsuarioActual;
+                    usuarioActual.Idioma = idiomaSeleccionado;
+                    UsuarioBLL usuarioBLL = new UsuarioBLL();
+                    usuarioBLL.ActualizarIdiomaUsuario(usuarioActual.ID, idiomaSeleccionado.ID);
+                }
+            }
+        }
+        private void btnNuevoIdioma_Click(object sender, EventArgs e)
+        {
+            string nuevoNombre = Microsoft.VisualBasic.Interaction.InputBox("Ingrese el nombre del idioma (Ej: Portugués):", "Nuevo Idioma");
+            string sufijo = Microsoft.VisualBasic.Interaction.InputBox("Ingrese la abreviación/sufijo (Ej: POR):", "Nuevo Idioma");
+            if (!string.IsNullOrEmpty(nuevoNombre) && !string.IsNullOrEmpty(sufijo))
+            {
+                try
+                {
+                    IdiomaBLL idiomaBLL = new IdiomaBLL();
+                    idiomaBLL.AgregarNuevoIdioma(nuevoNombre, sufijo);
+                    MessageBox.Show("Idioma agregado con éxito. Se han generado las etiquetas base.");
+                    cmbIdiomas.DataSource = idiomaBLL.ObtenerIdiomas();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+            }
         }
     }
 }

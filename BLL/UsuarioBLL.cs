@@ -45,6 +45,10 @@ namespace BLL
                 permisoBLL.LlenarPermisosDeUsuario(usuarioBD);
                 registroBLL.RegistrarEvento("Inicio de sesión del usuario: " + usuarioBD.Nombre, usuarioBD);
                 SessionManager.Instancia.Iniciar(usuarioBD);
+                if (usuarioBD.Idioma != null)
+                {
+                    GestorIdioma.Instancia.CambiarIdioma(usuarioBD.Idioma);
+                }
                 return usuarioBD;
             }
             else
@@ -162,6 +166,10 @@ namespace BLL
                 Accion = accion
             };
             usuarioDAL.GuardarEstadoHistorico(historico);
+        }
+        public void ActualizarIdiomaUsuario(int idUsuario, int idIdioma)
+        {
+            usuarioDAL.ActualizarIdioma(idUsuario, idIdioma);
         }
     }
 }

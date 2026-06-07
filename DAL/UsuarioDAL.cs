@@ -16,7 +16,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH FROM Usuario WHERE Nombre = @Nombre";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma FROM Usuario WHERE Nombre = @Nombre";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@Nombre", nombreUsuario);
@@ -31,6 +31,7 @@ namespace DAL
                             usuario.IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]);
                             usuario.Bloqueado = Convert.ToBoolean(reader["Bloqueado"]);
                             usuario.DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null;
+                            usuario.Idioma = reader["ID_Idioma"] != DBNull.Value ? new IdiomaBE { ID = Convert.ToInt32(reader["ID_Idioma"]) } : null;
                         }
                     }
                 }
@@ -59,7 +60,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH FROM Usuario";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma FROM Usuario";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -73,6 +74,7 @@ namespace DAL
                             usuario.IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]);
                             usuario.Bloqueado = Convert.ToBoolean(reader["Bloqueado"]);
                             usuario.DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null;
+                            usuario.Idioma = reader["ID_Idioma"] != DBNull.Value ? new IdiomaBE { ID = Convert.ToInt32(reader["ID_Idioma"]) } : null;
                             lista.Add(usuario);
                         }
                     }
@@ -116,7 +118,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH FROM Usuario WHERE ID = @ID";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma FROM Usuario WHERE ID = @ID";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@ID", idUsuario);
@@ -131,7 +133,8 @@ namespace DAL
                                 Clave = reader["Clave"].ToString(),
                                 IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]),
                                 Bloqueado = Convert.ToBoolean(reader["Bloqueado"]),
-                                DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null
+                                DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null,
+                                Idioma = reader["ID_Idioma"] != DBNull.Value ? new IdiomaBE { ID = Convert.ToInt32(reader["ID_Idioma"]) } : null
                             };
                         }
                     }
@@ -208,7 +211,8 @@ namespace DAL
                                     Clave = @Clave, 
                                     IntentosFallidos = @Intentos, 
                                     Bloqueado = @Bloqueado,
-                                    DVH = @DVH
+                                    DVH = @DVH,
+                                    ID_Idioma = @ID_Idioma
                                     WHERE ID = @ID";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
@@ -217,7 +221,22 @@ namespace DAL
                     cmd.Parameters.AddWithValue("@Intentos", usuario.IntentosFallidos);
                     cmd.Parameters.AddWithValue("@Bloqueado", usuario.Bloqueado);
                     cmd.Parameters.AddWithValue("@DVH", (object)usuario.DVH ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@ID_Idioma", usuario.Idioma.ID);
                     cmd.Parameters.AddWithValue("@ID", usuario.ID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public void ActualizarIdioma(int idUsuario, int idIdioma)
+        {
+            using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
+            {
+                cn.Open();
+                string query = "UPDATE Usuario SET ID_Idioma = @ID_Idioma WHERE ID = @ID";
+                using (SqlCommand cmd = new SqlCommand(query, cn))
+                {
+                    cmd.Parameters.AddWithValue("@ID_Idioma", idIdioma);
+                    cmd.Parameters.AddWithValue("@ID", idUsuario);
                     cmd.ExecuteNonQuery();
                 }
             }

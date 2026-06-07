@@ -20,6 +20,7 @@ namespace BE
         public bool Bloqueado { get; set; }
         public string DVH { get; set; }
         public List<ComponentePermiso> Permisos { get; set; } = new List<ComponentePermiso>();
+        public IdiomaBE Idioma { get; set; }
         public UsuarioMemento CrearMemento()
         {
             return new UsuarioMemento(this.Nombre, this.Clave, this.IntentosFallidos, this.Bloqueado);

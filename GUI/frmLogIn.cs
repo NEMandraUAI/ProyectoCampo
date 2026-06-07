@@ -1,10 +1,11 @@
 using BE;
 using BLL;
 using GUI.Eventos;
+using Seguridad;
 
 namespace GUI
 {
-    public partial class frmLogIn : Form
+    public partial class frmLogIn : Form, IObserverIdioma
     {
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         public event EventHandler<LogInEventArgs> LoginExitoso;
@@ -13,6 +14,7 @@ namespace GUI
             InitializeComponent();
             txtClave.PasswordChar = '*';
             btnVerClave.Text = "Ver Clave";
+            GestorIdioma.Instancia.Suscribir(this);
         }
         private void btnIniciarSesion_Click_1(object sender, EventArgs e)
         {
@@ -43,6 +45,36 @@ namespace GUI
                 txtClave.PasswordChar = '*';
                 btnVerClave.Text = "Ver Clave";
             }
+        }
+        private void frmLogIn_Load(object sender, EventArgs e)
+        {
+            ActualizarIdioma(GestorIdioma.Instancia.IdiomaActual);
+        }
+        public void ActualizarIdioma(IdiomaBE idioma)
+        {
+            IdiomaBLL idiomaBLL = new IdiomaBLL();
+            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (traducciones.ContainsKey(this.Name))
+                this.Text = traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, traducciones);
+        }
+        private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
+        {
+            foreach (Control control in controles)
+            {
+                if (traducciones.ContainsKey(control.Name))
+                {
+                    control.Text = traducciones[control.Name];
+                }
+                if (control.HasChildren)
+                {
+                    TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+            }
+        }
+        private void frmLogIn_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            GestorIdioma.Instancia.Desuscribir(this);
         }
     }
 }

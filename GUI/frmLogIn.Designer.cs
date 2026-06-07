@@ -31,8 +31,8 @@
             txtUsuario = new TextBox();
             txtClave = new TextBox();
             btnIniciarSesion = new Button();
-            label1 = new Label();
-            label2 = new Label();
+            lblUsuario = new Label();
+            lblClave = new Label();
             btnVerClave = new Button();
             SuspendLayout();
             // 
@@ -61,23 +61,23 @@
             btnIniciarSesion.UseVisualStyleBackColor = true;
             btnIniciarSesion.Click += btnIniciarSesion_Click_1;
             // 
-            // label1
+            // lblUsuario
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(35, 19);
-            label1.Name = "label1";
-            label1.Size = new Size(47, 15);
-            label1.TabIndex = 3;
-            label1.Text = "Usuario";
+            lblUsuario.AutoSize = true;
+            lblUsuario.Location = new Point(35, 19);
+            lblUsuario.Name = "lblUsuario";
+            lblUsuario.Size = new Size(47, 15);
+            lblUsuario.TabIndex = 3;
+            lblUsuario.Text = "Usuario";
             // 
-            // label2
+            // lblClave
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(35, 86);
-            label2.Name = "label2";
-            label2.Size = new Size(67, 15);
-            label2.TabIndex = 4;
-            label2.Text = "Contraseña";
+            lblClave.AutoSize = true;
+            lblClave.Location = new Point(35, 86);
+            lblClave.Name = "lblClave";
+            lblClave.Size = new Size(67, 15);
+            lblClave.TabIndex = 4;
+            lblClave.Text = "Contraseña";
             // 
             // btnVerClave
             // 
@@ -95,13 +95,14 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(273, 273);
             Controls.Add(btnVerClave);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            Controls.Add(lblClave);
+            Controls.Add(lblUsuario);
             Controls.Add(btnIniciarSesion);
             Controls.Add(txtClave);
             Controls.Add(txtUsuario);
             Name = "frmLogIn";
             Text = "LogIn";
+            Load += frmLogIn_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -111,8 +112,8 @@
         private TextBox txtUsuario;
         private TextBox txtClave;
         private Button btnIniciarSesion;
-        private Label label1;
-        private Label label2;
+        private Label lblUsuario;
+        private Label lblClave;
         private Button btnVerClave;
     }
 }
