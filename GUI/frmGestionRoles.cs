@@ -15,6 +15,11 @@ namespace GUI
 {
     public partial class frmGestionRoles : Form, IObserverIdioma
     {
+        private Dictionary<string, string> _traducciones = new Dictionary<string, string>();
+        private string T(string clave, string textoPorDefecto)
+        {
+            return _traducciones != null && _traducciones.ContainsKey(clave) ? _traducciones[clave] : textoPorDefecto;
+        }
         PermisoBLL permisoBLL = new PermisoBLL();
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         List<ComponentePermiso> listaArbolCompleto;
@@ -33,10 +38,10 @@ namespace GUI
         public void ActualizarIdioma(IdiomaBE idioma)
         {
             IdiomaBLL idiomaBLL = new IdiomaBLL();
-            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
-            if (traducciones.ContainsKey(this.Name))
-                this.Text = traducciones[this.Name];
-            TraducirControlesRecursivo(this.Controls, traducciones);
+            _traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (_traducciones.ContainsKey(this.Name))
+                this.Text = _traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, _traducciones);
         }
         private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
         {
@@ -56,6 +61,16 @@ namespace GUI
                 if (control.HasChildren)
                 {
                     TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+                if (control is DataGridView dgv)
+                {
+                    foreach (DataGridViewColumn columna in dgv.Columns)
+                    {
+                        if (traducciones.ContainsKey(columna.DataPropertyName))
+                        {
+                            columna.HeaderText = traducciones[columna.DataPropertyName];
+                        }
+                    }
                 }
             }
         }
@@ -83,8 +98,8 @@ namespace GUI
         private void CargarCatalogoPermisosDisponibles()
         {
             tvPermisosDisponibles.Nodes.Clear();
-            TreeNode nodoRoles = new TreeNode("ROLES (Familias)") { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
-            TreeNode nodoPatentes = new TreeNode("PERMISOS SIMPLES (Patentes)") { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
+            TreeNode nodoRoles = new TreeNode(T("nodoRolesBase", "ROLES (Familias)")) { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
+            TreeNode nodoPatentes = new TreeNode(T("nodoPatentesBase", "PERMISOS SIMPLES (Patentes)")) { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
             foreach (var comp in listaArbolCompleto)
             {
                 TreeNode nodo = new TreeNode(comp.Nombre);
@@ -149,14 +164,14 @@ namespace GUI
         }
         private void btnCrearFamilia_Click(object sender, EventArgs e)
         {
-            string nombreRol = Microsoft.VisualBasic.Interaction.InputBox("Nombre de la nueva familia (Rol):", "Nuevo Rol", "");
+            string nombreRol = Microsoft.VisualBasic.Interaction.InputBox(T("msgInputNuevoRol", "Nombre de la nueva familia (Rol):"), T("titInputNuevoRol", "Nuevo Rol"), "");
             if (!string.IsNullOrWhiteSpace(nombreRol))
             {
                 FamiliaBE nuevaFamilia = new FamiliaBE { Nombre = nombreRol };
                 try
                 {
                     permisoBLL.GuardarFamiliaCompleta(nuevaFamilia);
-                    MessageBox.Show("Rol creado. Ahora selecciónelo y añada permisos.");
+                    MessageBox.Show(T("msgRolCreado", "Rol creado. Ahora selecciónelo y añada permisos."));
                     CargarArbolRoles();
                 }
                 catch (Exception ex) { MessageBox.Show(ex.Message); }
@@ -170,11 +185,11 @@ namespace GUI
                 {
                     permisoBLL.EliminarFamilia(fam);
                     CargarArbolRoles();
-                    MessageBox.Show("Rol eliminado del sistema.");
+                    MessageBox.Show(T("msgRolEliminado", "Rol eliminado del sistema."));
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Eliminación denegada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(ex.Message, T("titEliminacionDenegada", "Eliminación denegada"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -229,7 +244,7 @@ namespace GUI
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(ex.Message, T("titErrorValidacion", "Error de validación"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                         cmbUsuarios_SelectedIndexChanged(null, null);
                     }
                 }
@@ -239,19 +254,19 @@ namespace GUI
         {
             if (tvRoles.SelectedNode == null || tvPermisosDisponibles.SelectedNode == null)
             {
-                MessageBox.Show("Debe seleccionar un rol destino en el panel izquierdo y un permiso/rol origen en el panel derecho.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(T("msgSeleccionarDestino", "Debe seleccionar un rol destino en el panel izquierdo y un permiso/rol origen en el panel derecho."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (tvPermisosDisponibles.SelectedNode.Tag == null)
             {
-                MessageBox.Show("Por favor, expanda las carpetas y seleccione un permiso individual.", "Acción Denegada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(T("msgSeleccionarPermiso", "Por favor, expanda las carpetas y seleccione un permiso individual."), T("titAccionDenegada", "Acción Denegada"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
             ComponentePermiso destino = (ComponentePermiso)tvRoles.SelectedNode.Tag;
             ComponentePermiso origen = (ComponentePermiso)tvPermisosDisponibles.SelectedNode.Tag;
             if (destino is PatenteBE)
             {
-                MessageBox.Show("Prohibido: El nodo destino es un Permiso Simple (Patente). Las patentes no pueden contener otros permisos. Debe seleccionar un Rol (Familia) en color azul.", "Acción Denegada", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(T("msgProhibidoPatente", "Prohibido: El nodo destino es un Permiso Simple (Patente). Las patentes no pueden contener otros permisos. Debe seleccionar un Rol (Familia) en color azul."), T("titAccionDenegada", "Acción Denegada"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             FamiliaBE familiaDestino = (FamiliaBE)destino;
@@ -261,29 +276,29 @@ namespace GUI
                 permisoBLL.GuardarFamiliaCompleta(familiaDestino);
                 CargarArbolRoles();
                 NotificarPosibleCambioEnUsuarioActual();
-                MessageBox.Show($"El permiso/rol '{origen.Nombre}' se asignó correctamente a '{familiaDestino.Nombre}'.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(T("msgPermisoAsignadoExito1", "El permiso/rol '") + origen.Nombre + T("msgPermisoAsignadoExito2", "' se asignó correctamente a '") + familiaDestino.Nombre + "'.", T("titExito", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
                 familiaDestino.RemoverHijo(origen);
-                MessageBox.Show(ex.Message, "Error de Validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, T("titErrorValidacion", "Error de Validación"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnCrearRolAnidado_Click(object sender, EventArgs e)
         {
             if (tvRoles.SelectedNode == null)
             {
-                MessageBox.Show("Debe seleccionar un rol padre en el árbol.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(T("msgSeleccionarPadre", "Debe seleccionar un rol padre en el árbol."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             ComponentePermiso nodoSeleccionado = (ComponentePermiso)tvRoles.SelectedNode.Tag;
             if (nodoSeleccionado is PatenteBE)
             {
-                MessageBox.Show("No puede anidar un rol dentro de un permiso simple.", "Acción Denegada", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(T("msgAnidarPatente", "No puede anidar un rol dentro de un permiso simple."), T("titAccionDenegada", "Acción Denegada"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             FamiliaBE familiaPadre = (FamiliaBE)nodoSeleccionado;
-            string nombreNuevoRol = Microsoft.VisualBasic.Interaction.InputBox($"Nombre del nuevo sub-rol para '{familiaPadre.Nombre}':", "Nuevo Rol Anidado", "");
+            string nombreNuevoRol = Microsoft.VisualBasic.Interaction.InputBox(T("msgInputRolAnidado", "Nombre del nuevo sub-rol para '") + familiaPadre.Nombre + "':", T("titInputRolAnidado", "Nuevo Rol Anidado"), "");
             if (!string.IsNullOrWhiteSpace(nombreNuevoRol))
             {
                 try
@@ -291,11 +306,11 @@ namespace GUI
                     permisoBLL.CrearRolDentroDeRol(familiaPadre, nombreNuevoRol);
                     CargarArbolRoles();
                     NotificarPosibleCambioEnUsuarioActual();
-                    MessageBox.Show("Sub-rol creado y asignado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(T("msgSubRolExito", "Sub-rol creado y asignado con éxito."), T("titExito", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

@@ -15,6 +15,11 @@ namespace GUI
 {
     public partial class frmSesion : Form, IObserverIdioma
     {
+        private Dictionary<string, string> _traducciones = new Dictionary<string, string>();
+        private string T(string clave, string textoPorDefecto)
+        {
+            return _traducciones != null && _traducciones.ContainsKey(clave) ? _traducciones[clave] : textoPorDefecto;
+        }
         RegistroBLL registroBLL = new RegistroBLL();
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         UsuarioBE usuarioActual;
@@ -27,7 +32,7 @@ namespace GUI
         }
         private void Sesion_Load(object sender, EventArgs e)
         {
-            lblBienvenida.Text = "Sesión activa - Bienvenido, " + usuarioActual.Nombre;
+            lblBienvenida_Base.Text = T("lblBienvenida_Base", "Sesión activa - Bienvenido, ") + usuarioActual.Nombre;
             dgvLogs.AutoGenerateColumns = false;
             ConfigurarGrilla();
             CargarComboUsuarios();
@@ -42,10 +47,10 @@ namespace GUI
         public void ActualizarIdioma(IdiomaBE idioma)
         {
             IdiomaBLL idiomaBLL = new IdiomaBLL();
-            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
-            if (traducciones.ContainsKey(this.Name))
-                this.Text = traducciones[this.Name];
-            TraducirControlesRecursivo(this.Controls, traducciones);
+            _traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (_traducciones.ContainsKey(this.Name))
+                this.Text = _traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, _traducciones);
         }
         private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
         {
@@ -65,6 +70,16 @@ namespace GUI
                 if (control.HasChildren)
                 {
                     TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+                if (control is DataGridView dgv)
+                {
+                    foreach (DataGridViewColumn columna in dgv.Columns)
+                    {
+                        if (traducciones.ContainsKey(columna.DataPropertyName))
+                        {
+                            columna.HeaderText = traducciones[columna.DataPropertyName];
+                        }
+                    }
                 }
             }
         }
@@ -86,6 +101,7 @@ namespace GUI
         {
             usuarioActual = SessionManager.Instancia.UsuarioActual;
             AplicarPermisosVisuales();
+            lblBienvenida_Base.Text = T("lblBienvenida_Base", "Sesión activa - Bienvenido, ") + usuarioActual.Nombre;
         }
         private void AplicarPermisosVisuales()
         {
@@ -107,7 +123,7 @@ namespace GUI
         private void CargarComboUsuarios()
         {
             List<UsuarioBE> listaUsuarios = usuarioBLL.ListarTodos();
-            listaUsuarios.Insert(0, new UsuarioBE { ID = 0, Nombre = "Todos" });
+            listaUsuarios.Insert(0, new UsuarioBE { ID = 0, Nombre = T("cmbTodos", "Todos") });
             cmbUsuarios.DataSource = listaUsuarios;
             cmbUsuarios.DisplayMember = "Nombre";
             cmbUsuarios.ValueMember = "ID";
@@ -188,8 +204,8 @@ namespace GUI
         private void btnBackup_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "Archivos de Backup SQL (*.bak)|*.bak";
-            sfd.Title = "Guardar Copia de Seguridad";
+            sfd.Filter = T("FiltroBackup", "Archivos de Backup SQL (*.bak)|*.bak");
+            sfd.Title = T("TitGuadarBackup", "Guardar Copia de Seguridad");
             sfd.FileName = $"ProyectoCampo_Backup_{DateTime.Now:yyyyMMdd_HHmmss}.bak";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
@@ -197,11 +213,11 @@ namespace GUI
                 {
                     BackupBLL backupBLL = new BackupBLL();
                     backupBLL.RealizarBackup(sfd.FileName);
-                    MessageBox.Show("Copia de seguridad generada y almacenada con éxito.", "Backup Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(T("msgBackupExito", "Copia de seguridad generada y almacenada con éxito."), T("titBackupExito", "Backup Exitoso"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error al generar el backup: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(T("msgBackupError", "Error al generar el backup: ") + ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -211,7 +227,7 @@ namespace GUI
             {
                 SessionManager.Instancia.PermisosActualizados -= SessionManager_PermisosActualizados;
                 usuarioBLL.CerrarSesion();
-                MessageBox.Show("La sesión se cerró correctamente.", "Sesión Cerrada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(T("msgSesionCerrada", "La sesión se cerró correctamente."), T("titSesionCerrada", "Sesión Cerrada"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 CerrarSesion?.Invoke(this, EventArgs.Empty);
             }
         }

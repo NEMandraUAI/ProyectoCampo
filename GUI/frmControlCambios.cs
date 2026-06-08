@@ -15,6 +15,11 @@ namespace GUI
 {
     public partial class frmControlCambios : Form, IObserverIdioma
     {
+        private Dictionary<string, string> _traducciones = new Dictionary<string, string>();
+        private string T(string clave, string textoPorDefecto)
+        {
+            return _traducciones != null && _traducciones.ContainsKey(clave) ? _traducciones[clave] : textoPorDefecto;
+        }
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         public frmControlCambios()
         {
@@ -51,10 +56,10 @@ namespace GUI
         public void ActualizarIdioma(IdiomaBE idioma)
         {
             IdiomaBLL idiomaBLL = new IdiomaBLL();
-            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
-            if (traducciones.ContainsKey(this.Name))
-                this.Text = traducciones[this.Name];
-            TraducirControlesRecursivo(this.Controls, traducciones);
+            _traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (_traducciones.ContainsKey(this.Name))
+                this.Text = _traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, _traducciones);
         }
         private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
         {
@@ -74,6 +79,16 @@ namespace GUI
                 if (control.HasChildren)
                 {
                     TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+                if (control is DataGridView dgv)
+                {
+                    foreach (DataGridViewColumn columna in dgv.Columns)
+                    {
+                        if (traducciones.ContainsKey(columna.DataPropertyName))
+                        {
+                            columna.HeaderText = traducciones[columna.DataPropertyName];
+                        }
+                    }
                 }
             }
         }
@@ -109,31 +124,31 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar historial", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, T("msgErrorHistorial", "Error al cargar historial"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnRestaurar_Click(object sender, EventArgs e)
         {
             if (dgvHistorial.CurrentRow == null || !(dgvHistorial.CurrentRow.DataBoundItem is UsuarioHistoricoBE))
             {
-                MessageBox.Show("Debe seleccionar un estado histórico de la grilla para restaurar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(T("msgSeleccionarEstado", "Debe seleccionar un estado histórico de la grilla para restaurar."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             UsuarioHistoricoBE estadoSeleccionado = (UsuarioHistoricoBE)dgvHistorial.CurrentRow.DataBoundItem;
             int idUsuario = (int)cmbUsuarios.SelectedValue;
-            DialogResult respuesta = MessageBox.Show($"¿Está seguro que desea restaurar al usuario a la versión del {estadoSeleccionado.FechaHora}?", "Confirmar Restauración", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult respuesta = MessageBox.Show(T("msgConfirmarRestauracion", "¿Está seguro que desea restaurar al usuario a la versión del ") + estadoSeleccionado.FechaHora + "?", T("titConfirmarRestauracion", "Confirmar Restauración"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (respuesta == DialogResult.Yes)
             {
                 try
                 {
                     UsuarioBE autor = SessionManager.Instancia.UsuarioActual;
                     usuarioBLL.RestaurarEstadoUsuario(idUsuario, estadoSeleccionado.ID_Cambio, autor);
-                    MessageBox.Show("El estado del usuario ha sido restaurado exitosamente. Se ha registrado el cambio en la auditoría.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(T("msgRestauracionExito", "El estado del usuario ha sido restaurado exitosamente. Se ha registrado el cambio en la auditoría."), T("titExito", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     CargarHistorial(idUsuario);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Error en la restauración", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, T("msgErrorRestauracion", "Error en la restauración"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            lblBienvenida = new Label();
+            lblBienvenida_Base = new Label();
             btnCerrarSesion = new Button();
             dgvLogs = new DataGridView();
             panel1 = new Panel();
@@ -51,14 +51,14 @@
             panel1.SuspendLayout();
             SuspendLayout();
             // 
-            // lblBienvenida
+            // lblBienvenida_Base
             // 
-            lblBienvenida.AutoSize = true;
-            lblBienvenida.Location = new Point(12, 69);
-            lblBienvenida.Name = "lblBienvenida";
-            lblBienvenida.Size = new Size(162, 15);
-            lblBienvenida.TabIndex = 0;
-            lblBienvenida.Text = "Sesión activa - Bienvenido/a, ";
+            lblBienvenida_Base.AutoSize = true;
+            lblBienvenida_Base.Location = new Point(12, 69);
+            lblBienvenida_Base.Name = "lblBienvenida_Base";
+            lblBienvenida_Base.Size = new Size(162, 15);
+            lblBienvenida_Base.TabIndex = 0;
+            lblBienvenida_Base.Text = "Sesión activa - Bienvenido/a, ";
             // 
             // btnCerrarSesion
             // 
@@ -248,7 +248,7 @@
             Controls.Add(panel1);
             Controls.Add(dgvLogs);
             Controls.Add(btnCerrarSesion);
-            Controls.Add(lblBienvenida);
+            Controls.Add(lblBienvenida_Base);
             Name = "frmSesion";
             Text = "Sesion";
             FormClosing += frmSesion_FormClosing;
@@ -262,7 +262,7 @@
 
         #endregion
 
-        private Label lblBienvenida;
+        private Label lblBienvenida_Base;
         private Button btnCerrarSesion;
         private DataGridView dgvLogs;
         private Panel panel1;

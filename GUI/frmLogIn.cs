@@ -7,6 +7,11 @@ namespace GUI
 {
     public partial class frmLogIn : Form, IObserverIdioma
     {
+        private Dictionary<string, string> _traducciones = new Dictionary<string, string>();
+        private string T(string clave, string textoPorDefecto)
+        {
+            return _traducciones != null && _traducciones.ContainsKey(clave) ? _traducciones[clave] : textoPorDefecto;
+        }
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         public event EventHandler<LogInEventArgs> LoginExitoso;
         public frmLogIn()
@@ -20,7 +25,7 @@ namespace GUI
         {
             if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtClave.Text))
             {
-                MessageBox.Show("Por favor, complete ambos campos para iniciar sesión.", "Campos Incompletos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(T("msgCamposIncompletos", "Por favor, complete ambos campos para iniciar sesión."), T("titCamposIncompletos", "Campos Incompletos"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             try
@@ -30,7 +35,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error de Autenticación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(ex.Message, T("titErrorAuth", "Error de Autenticación"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
         private void btnVerClave_Click(object sender, EventArgs e)
@@ -38,12 +43,12 @@ namespace GUI
             if (txtClave.PasswordChar == '*')
             {
                 txtClave.PasswordChar = '\0';
-                btnVerClave.Text = "Ocultar Clave";
+                btnVerClave.Text = T("btnOcultarClave", "Ocultar Clave");
             }
             else
             {
                 txtClave.PasswordChar = '*';
-                btnVerClave.Text = "Ver Clave";
+                btnVerClave.Text = T("btnVerClave_Text", "Ver Clave");
             }
         }
         private void frmLogIn_Load(object sender, EventArgs e)
@@ -53,10 +58,10 @@ namespace GUI
         public void ActualizarIdioma(IdiomaBE idioma)
         {
             IdiomaBLL idiomaBLL = new IdiomaBLL();
-            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
-            if (traducciones.ContainsKey(this.Name))
-                this.Text = traducciones[this.Name];
-            TraducirControlesRecursivo(this.Controls, traducciones);
+            _traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (_traducciones.ContainsKey(this.Name))
+                this.Text = _traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, _traducciones);
         }
         private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
         {
@@ -76,6 +81,16 @@ namespace GUI
                 if (control.HasChildren)
                 {
                     TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+                if (control is DataGridView dgv)
+                {
+                    foreach (DataGridViewColumn columna in dgv.Columns)
+                    {
+                        if (traducciones.ContainsKey(columna.DataPropertyName))
+                        {
+                            columna.HeaderText = traducciones[columna.DataPropertyName];
+                        }
+                    }
                 }
             }
         }

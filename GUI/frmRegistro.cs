@@ -15,6 +15,11 @@ namespace GUI
 {
     public partial class frmRegistro : Form, IObserverIdioma
     {
+        private Dictionary<string, string> _traducciones = new Dictionary<string, string>();
+        private string T(string clave, string textoPorDefecto)
+        {
+            return _traducciones != null && _traducciones.ContainsKey(clave) ? _traducciones[clave] : textoPorDefecto;
+        }
         UsuarioBLL usuarioBLL = new UsuarioBLL();
         public frmRegistro()
         {
@@ -28,23 +33,23 @@ namespace GUI
         {
             if (string.IsNullOrWhiteSpace(txtUsuario.Text) || string.IsNullOrWhiteSpace(txtClave1.Text) || string.IsNullOrWhiteSpace(txtClave2.Text))
             {
-                MessageBox.Show("Debe completar todos los campos.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(T("msgCamposIncompletos", "Debe completar todos los campos."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (txtClave1.Text != txtClave2.Text)
             {
-                MessageBox.Show("Las contraseñas no coinciden.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(T("msgClavesNoCoinciden", "Las contraseñas no coinciden."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             try
             {
                 usuarioBLL.RegistrarUsuario(txtUsuario.Text, txtClave1.Text);
-                MessageBox.Show("Usuario registrado con éxito.", "Registro", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(T("msgRegistroExito", "Usuario registrado con éxito."), T("titRegistro", "Registro"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnVerClave_Click(object sender, EventArgs e)
@@ -53,13 +58,13 @@ namespace GUI
             {
                 txtClave1.PasswordChar = '\0';
                 txtClave2.PasswordChar = '\0';
-                btnVerClave.Text = "Ocultar Clave";
+                btnVerClave.Text = T("btnOcultarClave", "Ocultar Clave");
             }
             else
             {
                 txtClave1.PasswordChar = '*';
                 txtClave2.PasswordChar = '*';
-                btnVerClave.Text = "Ver Clave";
+                btnVerClave.Text = T("btnVerClave_Text", "Ver Clave");
             }
         }
         private void frmRegistro_Load(object sender, EventArgs e)
@@ -69,10 +74,10 @@ namespace GUI
         public void ActualizarIdioma(IdiomaBE idioma)
         {
             IdiomaBLL idiomaBLL = new IdiomaBLL();
-            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
-            if (traducciones.ContainsKey(this.Name))
-                this.Text = traducciones[this.Name];
-            TraducirControlesRecursivo(this.Controls, traducciones);
+            _traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (_traducciones.ContainsKey(this.Name))
+                this.Text = _traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, _traducciones);
         }
         private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
         {
@@ -92,6 +97,16 @@ namespace GUI
                 if (control.HasChildren)
                 {
                     TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+                if (control is DataGridView dgv)
+                {
+                    foreach (DataGridViewColumn columna in dgv.Columns)
+                    {
+                        if (traducciones.ContainsKey(columna.DataPropertyName))
+                        {
+                            columna.HeaderText = traducciones[columna.DataPropertyName];
+                        }
+                    }
                 }
             }
         }
