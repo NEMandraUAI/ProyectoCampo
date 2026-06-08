@@ -66,9 +66,30 @@ namespace GUI
                 {
                     control.Text = traducciones[control.Name];
                 }
+                if (control is MenuStrip menuStrip)
+                {
+                    foreach (ToolStripItem item in menuStrip.Items)
+                    {
+                        TraducirItemMenu(item, traducciones);
+                    }
+                }
                 if (control.HasChildren)
                 {
                     TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+            }
+        }
+        private void TraducirItemMenu(ToolStripItem item, Dictionary<string, string> traducciones)
+        {
+            if (traducciones.ContainsKey(item.Name))
+            {
+                item.Text = traducciones[item.Name];
+            }
+            if (item is ToolStripMenuItem menuItem)
+            {
+                foreach (ToolStripItem subItem in menuItem.DropDownItems)
+                {
+                    TraducirItemMenu(subItem, traducciones);
                 }
             }
         }

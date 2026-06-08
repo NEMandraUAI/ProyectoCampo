@@ -251,6 +251,7 @@
             Controls.Add(lblBienvenida);
             Name = "frmSesion";
             Text = "Sesion";
+            FormClosing += frmSesion_FormClosing;
             Load += Sesion_Load;
             ((System.ComponentModel.ISupportInitialize)dgvLogs).EndInit();
             panel1.ResumeLayout(false);

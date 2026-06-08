@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace GUI
 {
-    public partial class frmSesion : Form
+    public partial class frmSesion : Form, IObserverIdioma
     {
         RegistroBLL registroBLL = new RegistroBLL();
         UsuarioBLL usuarioBLL = new UsuarioBLL();
@@ -23,7 +23,7 @@ namespace GUI
         {
             InitializeComponent();
             usuarioActual = usuarioP;
-            this.FormClosing += FrmSesion_FormClosing;
+            GestorIdioma.Instancia.Suscribir(this);
         }
         private void Sesion_Load(object sender, EventArgs e)
         {
@@ -37,6 +37,50 @@ namespace GUI
             EjecutarFiltro();
             SessionManager.Instancia.PermisosActualizados += SessionManager_PermisosActualizados;
             AplicarPermisosVisuales();
+            ActualizarIdioma(GestorIdioma.Instancia.IdiomaActual);
+        }
+        public void ActualizarIdioma(IdiomaBE idioma)
+        {
+            IdiomaBLL idiomaBLL = new IdiomaBLL();
+            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (traducciones.ContainsKey(this.Name))
+                this.Text = traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, traducciones);
+        }
+        private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
+        {
+            foreach (Control control in controles)
+            {
+                if (traducciones.ContainsKey(control.Name))
+                {
+                    control.Text = traducciones[control.Name];
+                }
+                if (control is MenuStrip menuStrip)
+                {
+                    foreach (ToolStripItem item in menuStrip.Items)
+                    {
+                        TraducirItemMenu(item, traducciones);
+                    }
+                }
+                if (control.HasChildren)
+                {
+                    TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+            }
+        }
+        private void TraducirItemMenu(ToolStripItem item, Dictionary<string, string> traducciones)
+        {
+            if (traducciones.ContainsKey(item.Name))
+            {
+                item.Text = traducciones[item.Name];
+            }
+            if (item is ToolStripMenuItem menuItem)
+            {
+                foreach (ToolStripItem subItem in menuItem.DropDownItems)
+                {
+                    TraducirItemMenu(subItem, traducciones);
+                }
+            }
         }
         private void SessionManager_PermisosActualizados(object sender, EventArgs e)
         {
@@ -119,16 +163,6 @@ namespace GUI
                 }
             }
         }
-        private void FrmSesion_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (SessionManager.Instancia.UsuarioActual != null)
-            {
-                SessionManager.Instancia.PermisosActualizados -= SessionManager_PermisosActualizados;
-                usuarioBLL.CerrarSesion();
-                MessageBox.Show("La sesión se cerró correctamente.", "Sesión Cerrada", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                CerrarSesion?.Invoke(this, EventArgs.Empty);
-            }
-        }
         private void btnControlCambios_Click(object sender, EventArgs e)
         {
             frmControlCambios frmCambios = new frmControlCambios();
@@ -169,6 +203,16 @@ namespace GUI
                 {
                     MessageBox.Show("Error al generar el backup: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+        }
+        private void frmSesion_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (SessionManager.Instancia.UsuarioActual != null)
+            {
+                SessionManager.Instancia.PermisosActualizados -= SessionManager_PermisosActualizados;
+                usuarioBLL.CerrarSesion();
+                MessageBox.Show("La sesión se cerró correctamente.", "Sesión Cerrada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CerrarSesion?.Invoke(this, EventArgs.Empty);
             }
         }
     }

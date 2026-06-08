@@ -86,6 +86,7 @@
             Controls.Add(cmbUsuarios);
             Name = "frmControlCambios";
             Text = "Control de Cambios";
+            FormClosing += frmControlCambios_FormClosing;
             Load += frmControlCambios_Load;
             ((System.ComponentModel.ISupportInitialize)dgvHistorial).EndInit();
             ResumeLayout(false);

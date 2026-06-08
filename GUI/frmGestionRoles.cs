@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace GUI
 {
-    public partial class frmGestionRoles : Form
+    public partial class frmGestionRoles : Form, IObserverIdioma
     {
         PermisoBLL permisoBLL = new PermisoBLL();
         UsuarioBLL usuarioBLL = new UsuarioBLL();
@@ -22,11 +22,56 @@ namespace GUI
         public frmGestionRoles()
         {
             InitializeComponent();
+            GestorIdioma.Instancia.Suscribir(this);
         }
         private void frmGestionRoles_Load(object sender, EventArgs e)
         {
             CargarArbolRoles();
             CargarUsuarios();
+            ActualizarIdioma(GestorIdioma.Instancia.IdiomaActual);
+        }
+        public void ActualizarIdioma(IdiomaBE idioma)
+        {
+            IdiomaBLL idiomaBLL = new IdiomaBLL();
+            var traducciones = idiomaBLL.ObtenerTraducciones(idioma, this.Name);
+            if (traducciones.ContainsKey(this.Name))
+                this.Text = traducciones[this.Name];
+            TraducirControlesRecursivo(this.Controls, traducciones);
+        }
+        private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
+        {
+            foreach (Control control in controles)
+            {
+                if (traducciones.ContainsKey(control.Name))
+                {
+                    control.Text = traducciones[control.Name];
+                }
+                if (control is MenuStrip menuStrip)
+                {
+                    foreach (ToolStripItem item in menuStrip.Items)
+                    {
+                        TraducirItemMenu(item, traducciones);
+                    }
+                }
+                if (control.HasChildren)
+                {
+                    TraducirControlesRecursivo(control.Controls, traducciones);
+                }
+            }
+        }
+        private void TraducirItemMenu(ToolStripItem item, Dictionary<string, string> traducciones)
+        {
+            if (traducciones.ContainsKey(item.Name))
+            {
+                item.Text = traducciones[item.Name];
+            }
+            if (item is ToolStripMenuItem menuItem)
+            {
+                foreach (ToolStripItem subItem in menuItem.DropDownItems)
+                {
+                    TraducirItemMenu(subItem, traducciones);
+                }
+            }
         }
         private void CargarArbolRoles()
         {

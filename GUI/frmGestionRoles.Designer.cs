@@ -70,9 +70,9 @@
             // 
             // btnCrearFamilia
             // 
-            btnCrearFamilia.Location = new Point(372, 431);
+            btnCrearFamilia.Location = new Point(340, 431);
             btnCrearFamilia.Name = "btnCrearFamilia";
-            btnCrearFamilia.Size = new Size(142, 52);
+            btnCrearFamilia.Size = new Size(207, 61);
             btnCrearFamilia.TabIndex = 3;
             btnCrearFamilia.Text = "Crear Rol";
             btnCrearFamilia.UseVisualStyleBackColor = true;
@@ -80,9 +80,9 @@
             // 
             // btnEliminarFamilia
             // 
-            btnEliminarFamilia.Location = new Point(372, 547);
+            btnEliminarFamilia.Location = new Point(340, 565);
             btnEliminarFamilia.Name = "btnEliminarFamilia";
-            btnEliminarFamilia.Size = new Size(142, 52);
+            btnEliminarFamilia.Size = new Size(207, 61);
             btnEliminarFamilia.TabIndex = 5;
             btnEliminarFamilia.Text = "Eliminar Rol";
             btnEliminarFamilia.UseVisualStyleBackColor = true;
@@ -90,9 +90,9 @@
             // 
             // btnAsignarRolUsuario
             // 
-            btnAsignarRolUsuario.Location = new Point(372, 95);
+            btnAsignarRolUsuario.Location = new Point(340, 86);
             btnAsignarRolUsuario.Name = "btnAsignarRolUsuario";
-            btnAsignarRolUsuario.Size = new Size(142, 52);
+            btnAsignarRolUsuario.Size = new Size(207, 61);
             btnAsignarRolUsuario.TabIndex = 6;
             btnAsignarRolUsuario.Text = "Asignar Rol/Permiso a Usuario";
             btnAsignarRolUsuario.UseVisualStyleBackColor = true;
@@ -100,9 +100,9 @@
             // 
             // btnQuitarRolUsuario
             // 
-            btnQuitarRolUsuario.Location = new Point(372, 153);
+            btnQuitarRolUsuario.Location = new Point(340, 153);
             btnQuitarRolUsuario.Name = "btnQuitarRolUsuario";
-            btnQuitarRolUsuario.Size = new Size(142, 52);
+            btnQuitarRolUsuario.Size = new Size(207, 61);
             btnQuitarRolUsuario.TabIndex = 7;
             btnQuitarRolUsuario.Text = "Quitar Rol/Permiso a Usuario";
             btnQuitarRolUsuario.UseVisualStyleBackColor = true;
@@ -112,7 +112,7 @@
             // 
             btnAsignarPermisoARol.Location = new Point(12, 347);
             btnAsignarPermisoARol.Name = "btnAsignarPermisoARol";
-            btnAsignarPermisoARol.Size = new Size(142, 52);
+            btnAsignarPermisoARol.Size = new Size(207, 61);
             btnAsignarPermisoARol.TabIndex = 9;
             btnAsignarPermisoARol.Text = "Asignar Rol/Permiso a Rol";
             btnAsignarPermisoARol.UseVisualStyleBackColor = true;
@@ -120,9 +120,9 @@
             // 
             // btnCrearRolAnidado
             // 
-            btnCrearRolAnidado.Location = new Point(372, 489);
+            btnCrearRolAnidado.Location = new Point(340, 498);
             btnCrearRolAnidado.Name = "btnCrearRolAnidado";
-            btnCrearRolAnidado.Size = new Size(142, 52);
+            btnCrearRolAnidado.Size = new Size(207, 61);
             btnCrearRolAnidado.TabIndex = 10;
             btnCrearRolAnidado.Text = "Crear Rol Anidado";
             btnCrearRolAnidado.UseVisualStyleBackColor = true;

@@ -102,6 +102,7 @@
             Controls.Add(txtUsuario);
             Name = "frmLogIn";
             Text = "LogIn";
+            FormClosing += frmLogIn_FormClosing;
             Load += frmLogIn_Load;
             ResumeLayout(false);
             PerformLayout();

@@ -123,6 +123,7 @@
             Controls.Add(txtUsuario);
             Name = "frmRegistro";
             Text = "Registro";
+            Load += frmRegistro_Load;
             ResumeLayout(false);
             PerformLayout();
         }
