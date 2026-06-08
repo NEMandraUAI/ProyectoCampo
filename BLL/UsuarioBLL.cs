@@ -25,6 +25,10 @@ namespace BLL
             {
                 throw new Exception("Usuario o clave incorrectos.");
             }
+            if (usuarioBD.Nombre != usuario)
+            {
+                throw new Exception("Usuario o clave incorrectos.");
+            }
             if (usuarioBD.Bloqueado)
             {
                 registroBLL.RegistrarEvento("Intento de acceso a cuenta bloqueada: " + usuarioBD.Nombre, usuarioBD, "CRÍTICO");

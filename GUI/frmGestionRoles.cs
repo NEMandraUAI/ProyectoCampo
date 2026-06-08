@@ -42,6 +42,11 @@ namespace GUI
             if (_traducciones.ContainsKey(this.Name))
                 this.Text = _traducciones[this.Name];
             TraducirControlesRecursivo(this.Controls, _traducciones);
+            if (tvPermisosDisponibles.Nodes.Count >= 2)
+            {
+                tvPermisosDisponibles.Nodes[0].Text = T("nodoRolesBase", "ROLES (Familias)") + "   ";
+                tvPermisosDisponibles.Nodes[1].Text = T("nodoPatentesBase", "PERMISOS SIMPLES (Patentes)") + "   ";
+            }
         }
         private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
         {
@@ -98,8 +103,8 @@ namespace GUI
         private void CargarCatalogoPermisosDisponibles()
         {
             tvPermisosDisponibles.Nodes.Clear();
-            TreeNode nodoRoles = new TreeNode(T("nodoRolesBase", "ROLES (Familias)")) { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
-            TreeNode nodoPatentes = new TreeNode(T("nodoPatentesBase", "PERMISOS SIMPLES (Patentes)")) { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
+            TreeNode nodoRoles = new TreeNode(T("nodoRolesBase", "ROLES (Familias)") + "   ") { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
+            TreeNode nodoPatentes = new TreeNode(T("nodoPatentesBase", "PERMISOS SIMPLES (Patentes)") + "   ") { ForeColor = Color.Black, NodeFont = new Font(tvPermisosDisponibles.Font, FontStyle.Bold) };
             foreach (var comp in listaArbolCompleto)
             {
                 TreeNode nodo = new TreeNode(comp.Nombre);

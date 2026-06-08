@@ -36,7 +36,7 @@ namespace GUI
             dgvLogs.AutoGenerateColumns = false;
             ConfigurarGrilla();
             CargarComboUsuarios();
-            cmbCriticidad.SelectedIndex = 0;
+            CargarComboCriticidad();
             dtpDesde.Value = DateTime.Now.AddDays(-7);
             dtpHasta.Value = DateTime.Now;
             EjecutarFiltro();
@@ -51,6 +51,28 @@ namespace GUI
             if (_traducciones.ContainsKey(this.Name))
                 this.Text = _traducciones[this.Name];
             TraducirControlesRecursivo(this.Controls, _traducciones);
+            if (usuarioActual != null)
+            {
+                lblBienvenida_Base.Text = T("lblBienvenida_Base", "Sesión activa - Bienvenido, ") + usuarioActual.Nombre;
+            }
+            if (cmbUsuarios.Items.Count > 0)
+            {
+                object valorSeleccionado = cmbUsuarios.SelectedValue;
+                CargarComboUsuarios();
+                if (valorSeleccionado != null)
+                {
+                    cmbUsuarios.SelectedValue = valorSeleccionado;
+                }
+            }
+            if (cmbCriticidad.Items.Count > 0)
+            {
+                object valorSeleccionadoCrit = cmbCriticidad.SelectedValue;
+                CargarComboCriticidad();
+                if (valorSeleccionadoCrit != null)
+                {
+                    cmbCriticidad.SelectedValue = valorSeleccionadoCrit;
+                }
+            }
         }
         private void TraducirControlesRecursivo(Control.ControlCollection controles, Dictionary<string, string> traducciones)
         {
@@ -128,6 +150,20 @@ namespace GUI
             cmbUsuarios.DisplayMember = "Nombre";
             cmbUsuarios.ValueMember = "ID";
         }
+        private void CargarComboCriticidad()
+        {
+            List<KeyValuePair<string, string>> itemsCriticidad = new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>(T("cmbTodos", "Todos"), "Todos"),
+                new KeyValuePair<string, string>(T("criticidadInfo", "INFORMACIÓN"), "INFO"),
+                new KeyValuePair<string, string>(T("criticidadAlerta", "ALERTA"), "ALERTA"),
+                new KeyValuePair<string, string>(T("criticidadCritico", "CRÍTICO"), "CRÍTICO"),
+                new KeyValuePair<string, string>(T("criticidadAlta", "ALTA"), "ALTA")
+            };
+            cmbCriticidad.DataSource = itemsCriticidad;
+            cmbCriticidad.DisplayMember = "Key";
+            cmbCriticidad.ValueMember = "Value";
+        }
         private void EjecutarFiltro()
         {
             int? idUsu = null;
@@ -135,11 +171,12 @@ namespace GUI
             {
                 idUsu = (int)cmbUsuarios.SelectedValue;
             }
+            string valorCriticidad = cmbCriticidad.SelectedValue != null ? cmbCriticidad.SelectedValue.ToString() : "Todos";
             dgvLogs.DataSource = null;
             dgvLogs.DataSource = registroBLL.ConsultaLogsFiltros(
                 dtpDesde.Value,
                 dtpHasta.Value,
-                cmbCriticidad.Text,
+                valorCriticidad,
                 idUsu,
                 txtBuscar.Text);
         }

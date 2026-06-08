@@ -187,7 +187,6 @@
             // cmbCriticidad
             // 
             cmbCriticidad.FormattingEnabled = true;
-            cmbCriticidad.Items.AddRange(new object[] { "Todos", "INFO", "ALERTA", "CRÍTICO", "ALTA" });
             cmbCriticidad.Location = new Point(3, 83);
             cmbCriticidad.Name = "cmbCriticidad";
             cmbCriticidad.Size = new Size(276, 23);
