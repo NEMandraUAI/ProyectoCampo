@@ -38,10 +38,10 @@
             btnAsignarPermisoARol = new Button();
             btnCrearRolAnidado = new Button();
             tvPermisosDisponibles = new TreeView();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
+            lblJerarquia = new Label();
+            lblUsuario = new Label();
+            lblPermisosUsuario = new Label();
+            lblCatalogo = new Label();
             SuspendLayout();
             // 
             // tvRoles
@@ -136,55 +136,55 @@
             tvPermisosDisponibles.Size = new Size(322, 314);
             tvPermisosDisponibles.TabIndex = 11;
             // 
-            // label1
+            // lblJerarquia
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(12, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(278, 15);
-            label1.TabIndex = 12;
-            label1.Text = "Estructura Jerárquica de Roles (Árbol de Familias)";
+            lblJerarquia.AutoSize = true;
+            lblJerarquia.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblJerarquia.Location = new Point(12, 9);
+            lblJerarquia.Name = "lblJerarquia";
+            lblJerarquia.Size = new Size(278, 15);
+            lblJerarquia.TabIndex = 12;
+            lblJerarquia.Text = "Estructura Jerárquica de Roles (Árbol de Familias)";
             // 
-            // label2
+            // lblUsuario
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(340, 27);
-            label2.Name = "label2";
-            label2.Size = new Size(116, 15);
-            label2.TabIndex = 13;
-            label2.Text = "Seleccionar Usuario";
+            lblUsuario.AutoSize = true;
+            lblUsuario.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblUsuario.Location = new Point(340, 27);
+            lblUsuario.Name = "lblUsuario";
+            lblUsuario.Size = new Size(116, 15);
+            lblUsuario.TabIndex = 13;
+            lblUsuario.Text = "Seleccionar Usuario";
             // 
-            // label3
+            // lblPermisosUsuario
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(553, 9);
-            label3.Name = "label3";
-            label3.Size = new Size(252, 15);
-            label3.TabIndex = 14;
-            label3.Text = "Permisos Efectivos del Usuario Seleccionado";
+            lblPermisosUsuario.AutoSize = true;
+            lblPermisosUsuario.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPermisosUsuario.Location = new Point(553, 9);
+            lblPermisosUsuario.Name = "lblPermisosUsuario";
+            lblPermisosUsuario.Size = new Size(252, 15);
+            lblPermisosUsuario.TabIndex = 14;
+            lblPermisosUsuario.Text = "Permisos Efectivos del Usuario Seleccionado";
             // 
-            // label4
+            // lblCatalogo
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(12, 413);
-            label4.Name = "label4";
-            label4.Size = new Size(280, 15);
-            label4.TabIndex = 15;
-            label4.Text = "Catálogo General de Permisos y Roles Disponibles";
+            lblCatalogo.AutoSize = true;
+            lblCatalogo.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblCatalogo.Location = new Point(12, 413);
+            lblCatalogo.Name = "lblCatalogo";
+            lblCatalogo.Size = new Size(280, 15);
+            lblCatalogo.TabIndex = 15;
+            lblCatalogo.Text = "Catálogo General de Permisos y Roles Disponibles";
             // 
             // frmGestionRoles
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(907, 756);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            Controls.Add(lblCatalogo);
+            Controls.Add(lblPermisosUsuario);
+            Controls.Add(lblUsuario);
+            Controls.Add(lblJerarquia);
             Controls.Add(tvPermisosDisponibles);
             Controls.Add(btnCrearRolAnidado);
             Controls.Add(btnAsignarPermisoARol);
@@ -215,9 +215,9 @@
         private Button btnAsignarPermisoARol;
         private Button btnCrearRolAnidado;
         private TreeView tvPermisosDisponibles;
-        private Label label1;
-        private Label label2;
-        private Label label3;
-        private Label label4;
+        private Label lblJerarquia;
+        private Label lblUsuario;
+        private Label lblPermisosUsuario;
+        private Label lblCatalogo;
     }
 }
