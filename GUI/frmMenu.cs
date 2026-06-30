@@ -132,6 +132,7 @@ namespace GUI
                 f.Close();
             }
             AbrirSesion(e.Usuario);
+            EvaluarPermisosIdioma();
         }
         private void AbrirSesion(UsuarioBE pUsuario)
         {
@@ -145,6 +146,7 @@ namespace GUI
             BLL.IntegridadBLL integridadBLL = new BLL.IntegridadBLL();
             try
             {
+                EvaluarPermisosIdioma();
                 integridadBLL.VerificarIntegridadSistema();
                 AbrirLogin();
             }
@@ -215,6 +217,9 @@ namespace GUI
             cmbIdiomas.SelectedValue = GestorIdioma.Instancia.IdiomaActual.ID;
             cmbIdiomas.SelectedIndexChanged += cmbIdiomas_SelectedIndexChanged;
             ActualizarIdioma(GestorIdioma.Instancia.IdiomaActual);
+            btnNuevoIdioma.Visible = false;
+            btnNuevoIdioma.Text = "Gestionar Idiomas";
+            btnNuevoIdioma.Click += AbrirPanelAdministrador_Click;
         }
         public void ActualizarIdioma(IdiomaBE idioma)
         {
@@ -290,24 +295,24 @@ namespace GUI
                 }
             }
         }
-        private void btnNuevoIdioma_Click(object sender, EventArgs e)
+        public void EvaluarPermisosIdioma()
         {
-            string nuevoNombre = Microsoft.VisualBasic.Interaction.InputBox("Ingrese el nombre del idioma (Ej: Portugués):", "Nuevo Idioma");
-            string sufijo = Microsoft.VisualBasic.Interaction.InputBox("Ingrese la abreviación/sufijo (Ej: POR):", "Nuevo Idioma");
-            if (!string.IsNullOrEmpty(nuevoNombre) && !string.IsNullOrEmpty(sufijo))
+            var u = SessionManager.Instancia.UsuarioActual;
+            btnNuevoIdioma.Visible = (u != null && u.TienePermiso("GESTION_IDIOMAS"));
+        }
+        private void AbrirPanelAdministrador_Click(object sender, EventArgs e)
+        {
+            frmGestionIdiomas frm = new frmGestionIdiomas();
+            frm.MdiParent = this;
+            frm.FormClosed += (s, args) =>
             {
-                try
-                {
-                    IdiomaBLL idiomaBLL = new IdiomaBLL();
-                    idiomaBLL.AgregarNuevoIdioma(nuevoNombre, sufijo);
-                    MessageBox.Show("Idioma agregado con éxito. Se han generado las etiquetas base.");
-                    cmbIdiomas.DataSource = idiomaBLL.ObtenerIdiomas();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-            }
+                IdiomaBLL idiomaBLL = new IdiomaBLL();
+                cmbIdiomas.SelectedIndexChanged -= cmbIdiomas_SelectedIndexChanged;
+                cmbIdiomas.DataSource = idiomaBLL.ObtenerIdiomas();
+                cmbIdiomas.SelectedValue = GestorIdioma.Instancia.IdiomaActual.ID;
+                cmbIdiomas.SelectedIndexChanged += cmbIdiomas_SelectedIndexChanged;
+            };
+            frm.Show();
         }
     }
 }

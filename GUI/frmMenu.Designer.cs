@@ -95,9 +95,8 @@
             btnNuevoIdioma.Name = "btnNuevoIdioma";
             btnNuevoIdioma.Size = new Size(170, 42);
             btnNuevoIdioma.TabIndex = 4;
-            btnNuevoIdioma.Text = "Nuevo Idioma";
+            btnNuevoIdioma.Text = "Gestionar Idiomas";
             btnNuevoIdioma.UseVisualStyleBackColor = true;
-            btnNuevoIdioma.Click += btnNuevoIdioma_Click;
             // 
             // panelIdioma
             // 

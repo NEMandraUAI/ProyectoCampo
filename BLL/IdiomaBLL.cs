@@ -1,5 +1,6 @@
 ﻿using BE;
 using DAL;
+using Seguridad;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +20,32 @@ namespace BLL
         }
         public void AgregarNuevoIdioma(string nombre, string sufijo)
         {
+            UsuarioBE usuarioActual = SessionManager.Instancia.UsuarioActual;
+            if (usuarioActual == null || !usuarioActual.TienePermiso("GESTION_IDIOMAS"))
+                throw new Exception("Operación Denegada. No tiene los permisos de Administrador necesarios para crear idiomas.");
             if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(sufijo))
-                throw new System.Exception("Debe proveer un nombre y un sufijo (Ej: POR, ENG).");
+                throw new Exception("Debe proveer un nombre y un sufijo (Ej: POR, ENG).");
             idiomaDAL.CrearIdiomaConSufijo(nombre, sufijo.ToUpper());
+        }
+        public void EliminarIdioma(int idIdioma)
+        {
+            UsuarioBE usuarioActual = SessionManager.Instancia.UsuarioActual;
+            if (usuarioActual == null || !usuarioActual.TienePermiso("GESTION_IDIOMAS"))
+                throw new Exception("Operación Denegada. No tiene permisos para eliminar idiomas.");
+            if (idIdioma == 1)
+                throw new Exception("Seguridad: No se puede eliminar el idioma predeterminado del sistema (Español).");
+            idiomaDAL.EliminarIdioma(idIdioma);
+        }
+        public List<TraduccionBE> ObtenerTodasLasTraducciones(int idIdioma)
+        {
+            return idiomaDAL.ObtenerTodasLasTraducciones(idIdioma);
+        }
+        public void ActualizarTraducciones(List<TraduccionBE> traducciones)
+        {
+            UsuarioBE usuarioActual = SessionManager.Instancia.UsuarioActual;
+            if (usuarioActual == null || !usuarioActual.TienePermiso("GESTION_IDIOMAS"))
+                throw new Exception("Operación Denegada. No tiene permisos para modificar traducciones.");
+            idiomaDAL.ActualizarTraducciones(traducciones);
         }
     }
 }

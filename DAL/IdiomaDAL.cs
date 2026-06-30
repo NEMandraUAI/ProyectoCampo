@@ -77,5 +77,83 @@ namespace DAL
                 }
             }
         }
+        public List<TraduccionBE> ObtenerTodasLasTraducciones(int idIdioma)
+        {
+            List<TraduccionBE> lista = new List<TraduccionBE>();
+            using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
+            {
+                cn.Open();
+                string query = @"SELECT t.ID, e.Formulario, e.NombreControl, t.Texto 
+                                FROM Traduccion t 
+                                INNER JOIN Etiqueta e ON t.ID_Etiqueta = e.ID 
+                                WHERE t.ID_Idioma = @IdIdioma";
+                SqlCommand cmd = new SqlCommand(query, cn);
+                cmd.Parameters.AddWithValue("@IdIdioma", idIdioma);
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        lista.Add(new TraduccionBE
+                        {
+                            ID = Convert.ToInt32(reader["ID"]),
+                            Formulario = reader["Formulario"].ToString(),
+                            NombreControl = reader["NombreControl"].ToString(),
+                            Texto = reader["Texto"].ToString()
+                        });
+                    }
+                }
+            }
+            return lista;
+        }
+        public void ActualizarTraducciones(List<TraduccionBE> traducciones)
+        {
+            using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
+            {
+                cn.Open();
+                SqlTransaction tx = cn.BeginTransaction();
+                try
+                {
+                    foreach (var trad in traducciones)
+                    {
+                        SqlCommand cmd = new SqlCommand("UPDATE Traduccion SET Texto = @Texto WHERE ID = @ID", cn, tx);
+                        cmd.Parameters.AddWithValue("@Texto", trad.Texto);
+                        cmd.Parameters.AddWithValue("@ID", trad.ID);
+                        cmd.ExecuteNonQuery();
+                    }
+                    tx.Commit();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
+            }
+        }
+        public void EliminarIdioma(int idIdioma)
+        {
+            using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
+            {
+                cn.Open();
+                SqlTransaction tx = cn.BeginTransaction();
+                try
+                {
+                    SqlCommand cmdUsu = new SqlCommand("UPDATE Usuario SET ID_Idioma = 1 WHERE ID_Idioma = @IdIdioma", cn, tx);
+                    cmdUsu.Parameters.AddWithValue("@IdIdioma", idIdioma);
+                    cmdUsu.ExecuteNonQuery();
+                    SqlCommand cmdTrad = new SqlCommand("DELETE FROM Traduccion WHERE ID_Idioma = @IdIdioma", cn, tx);
+                    cmdTrad.Parameters.AddWithValue("@IdIdioma", idIdioma);
+                    cmdTrad.ExecuteNonQuery();
+                    SqlCommand cmdIdi = new SqlCommand("DELETE FROM Idioma WHERE ID = @IdIdioma", cn, tx);
+                    cmdIdi.Parameters.AddWithValue("@IdIdioma", idIdioma);
+                    cmdIdi.ExecuteNonQuery();
+                    tx.Commit();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
+            }
+        }
     }
 }
