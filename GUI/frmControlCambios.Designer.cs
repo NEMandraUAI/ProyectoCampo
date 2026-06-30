@@ -32,6 +32,7 @@
             dgvHistorial = new DataGridView();
             btnRestaurar = new Button();
             btnVolver = new Button();
+            btnModificarJerarquia = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvHistorial).BeginInit();
             SuspendLayout();
             // 
@@ -57,7 +58,7 @@
             // 
             // btnRestaurar
             // 
-            btnRestaurar.Location = new Point(237, 55);
+            btnRestaurar.Location = new Point(248, 55);
             btnRestaurar.Name = "btnRestaurar";
             btnRestaurar.Size = new Size(141, 34);
             btnRestaurar.TabIndex = 2;
@@ -75,11 +76,22 @@
             btnVolver.UseVisualStyleBackColor = true;
             btnVolver.Click += btnVolver_Click;
             // 
+            // btnModificarJerarquia
+            // 
+            btnModificarJerarquia.Location = new Point(410, 55);
+            btnModificarJerarquia.Name = "btnModificarJerarquia";
+            btnModificarJerarquia.Size = new Size(141, 34);
+            btnModificarJerarquia.TabIndex = 6;
+            btnModificarJerarquia.Text = "Modificar Jerarquía";
+            btnModificarJerarquia.UseVisualStyleBackColor = true;
+            btnModificarJerarquia.Click += btnModificarJerarquia_Click;
+            // 
             // frmControlCambios
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 480);
+            Controls.Add(btnModificarJerarquia);
             Controls.Add(btnVolver);
             Controls.Add(btnRestaurar);
             Controls.Add(dgvHistorial);
@@ -98,5 +110,6 @@
         private DataGridView dgvHistorial;
         private Button btnRestaurar;
         private Button btnVolver;
+        private Button btnModificarJerarquia;
     }
 }

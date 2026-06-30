@@ -16,7 +16,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma FROM Usuario WHERE Nombre = @Nombre";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma, NivelJerarquia FROM Usuario WHERE Nombre = @Nombre";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@Nombre", nombreUsuario);
@@ -32,6 +32,7 @@ namespace DAL
                             usuario.Bloqueado = Convert.ToBoolean(reader["Bloqueado"]);
                             usuario.DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null;
                             usuario.Idioma = reader["ID_Idioma"] != DBNull.Value ? new IdiomaBE { ID = Convert.ToInt32(reader["ID_Idioma"]) } : null;
+                            usuario.NivelJerarquia = Convert.ToInt32(reader["NivelJerarquia"]);
                         }
                     }
                 }
@@ -60,7 +61,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma FROM Usuario";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma, NivelJerarquia FROM Usuario";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -75,6 +76,7 @@ namespace DAL
                             usuario.Bloqueado = Convert.ToBoolean(reader["Bloqueado"]);
                             usuario.DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null;
                             usuario.Idioma = reader["ID_Idioma"] != DBNull.Value ? new IdiomaBE { ID = Convert.ToInt32(reader["ID_Idioma"]) } : null;
+                            usuario.NivelJerarquia = Convert.ToInt32(reader["NivelJerarquia"]);
                             lista.Add(usuario);
                         }
                     }
@@ -88,7 +90,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "INSERT INTO Usuario (Nombre, Clave, IntentosFallidos, Bloqueado) VALUES (@Nombre, @Clave, 0, 0); SELECT SCOPE_IDENTITY();";
+                string consulta = "INSERT INTO Usuario (Nombre, Clave, IntentosFallidos, Bloqueado, NivelJerarquia) VALUES (@Nombre, @Clave, 0, 0, 1); SELECT SCOPE_IDENTITY();";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@Nombre", nuevoUsuario.Nombre);
@@ -118,7 +120,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma FROM Usuario WHERE ID = @ID";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma, NivelJerarquia FROM Usuario WHERE ID = @ID";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@ID", idUsuario);
@@ -134,7 +136,8 @@ namespace DAL
                                 IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]),
                                 Bloqueado = Convert.ToBoolean(reader["Bloqueado"]),
                                 DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null,
-                                Idioma = reader["ID_Idioma"] != DBNull.Value ? new IdiomaBE { ID = Convert.ToInt32(reader["ID_Idioma"]) } : null
+                                Idioma = reader["ID_Idioma"] != DBNull.Value ? new IdiomaBE { ID = Convert.ToInt32(reader["ID_Idioma"]) } : null,
+                                NivelJerarquia = Convert.ToInt32(reader["NivelJerarquia"])
                             };
                         }
                     }
@@ -148,8 +151,8 @@ namespace DAL
             {
                 cn.Open();
                 string consulta = @"INSERT INTO Usuario_Historico 
-                                    (ID_Usuario, Nombre, Clave, IntentosFallidos, Bloqueado, ID_Usuario_Autor, FechaHora, Accion) 
-                                    VALUES (@ID_Usu, @Nombre, @Clave, @Intentos, @Bloqueado, @ID_Autor, @Fecha, @Accion)";
+                                    (ID_Usuario, Nombre, Clave, IntentosFallidos, Bloqueado, ID_Usuario_Autor, FechaHora, Accion, NivelJerarquia) 
+                                    VALUES (@ID_Usu, @Nombre, @Clave, @Intentos, @Bloqueado, @ID_Autor, @Fecha, @Accion, @NivelJerarquia)";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     cmd.Parameters.AddWithValue("@ID_Usu", historico.ID);
@@ -160,6 +163,7 @@ namespace DAL
                     cmd.Parameters.AddWithValue("@ID_Autor", historico.ID_Usuario_Autor);
                     cmd.Parameters.AddWithValue("@Fecha", historico.FechaHora);
                     cmd.Parameters.AddWithValue("@Accion", historico.Accion);
+                    cmd.Parameters.AddWithValue("@NivelJerarquia", historico.NivelJerarquia);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -193,7 +197,8 @@ namespace DAL
                                 ID_Usuario_Autor = Convert.ToInt32(reader["ID_Usuario_Autor"]),
                                 NombreUsuarioAutor = reader["NombreAutor"].ToString(),
                                 FechaHora = Convert.ToDateTime(reader["FechaHora"]),
-                                Accion = reader["Accion"].ToString()
+                                Accion = reader["Accion"].ToString(),
+                                NivelJerarquia = Convert.ToInt32(reader["NivelJerarquia"])
                             });
                         }
                     }
@@ -212,7 +217,8 @@ namespace DAL
                                     IntentosFallidos = @Intentos, 
                                     Bloqueado = @Bloqueado,
                                     DVH = @DVH,
-                                    ID_Idioma = @ID_Idioma
+                                    ID_Idioma = @ID_Idioma,
+                                    NivelJerarquia = @NivelJerarquia
                                     WHERE ID = @ID";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
@@ -222,6 +228,7 @@ namespace DAL
                     cmd.Parameters.AddWithValue("@Bloqueado", usuario.Bloqueado);
                     cmd.Parameters.AddWithValue("@DVH", (object)usuario.DVH ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@ID_Idioma", usuario.Idioma.ID);
+                    cmd.Parameters.AddWithValue("@NivelJerarquia", usuario.NivelJerarquia);
                     cmd.Parameters.AddWithValue("@ID", usuario.ID);
                     cmd.ExecuteNonQuery();
                 }
@@ -236,6 +243,21 @@ namespace DAL
                 using (SqlCommand cmd = new SqlCommand(query, cn))
                 {
                     cmd.Parameters.AddWithValue("@ID_Idioma", idIdioma);
+                    cmd.Parameters.AddWithValue("@ID", idUsuario);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public void ActualizarJerarquiaYDVH(int idUsuario, int nivelJerarquia, string dvh)
+        {
+            using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
+            {
+                cn.Open();
+                string consulta = "UPDATE Usuario SET NivelJerarquia = @Nivel, DVH = @DVH WHERE ID = @ID";
+                using (SqlCommand cmd = new SqlCommand(consulta, cn))
+                {
+                    cmd.Parameters.AddWithValue("@Nivel", nivelJerarquia);
+                    cmd.Parameters.AddWithValue("@DVH", dvh);
                     cmd.Parameters.AddWithValue("@ID", idUsuario);
                     cmd.ExecuteNonQuery();
                 }

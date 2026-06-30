@@ -125,6 +125,10 @@ namespace BLL
             if (versionARestaurar == null)
                 throw new Exception("No se encontró el estado histórico especificado.");
             UsuarioBE usuarioActual = usuarioDAL.ObtenerPorID(idUsuario);
+            if (usuarioAutor.NivelJerarquia < usuarioActual.NivelJerarquia)
+            {
+                throw new Exception("Operación de Seguridad Denegada: No tiene la jerarquía suficiente para modificar a este usuario.");
+            }
             if (usuarioActual.Nombre == versionARestaurar.Nombre &&
                 usuarioActual.Clave == versionARestaurar.Clave &&
                 usuarioActual.IntentosFallidos == versionARestaurar.IntentosFallidos &&
@@ -136,7 +140,8 @@ namespace BLL
                 versionARestaurar.Nombre,
                 versionARestaurar.Clave,
                 versionARestaurar.IntentosFallidos,
-                versionARestaurar.Bloqueado
+                versionARestaurar.Bloqueado,
+                versionARestaurar.NivelJerarquia
             );
             usuarioActual.RestaurarMemento(memento);
             usuarioActual.DVH = DVManager.CalcularDVH(usuarioActual);
@@ -174,6 +179,32 @@ namespace BLL
         public void ActualizarIdiomaUsuario(int idUsuario, int idIdioma)
         {
             usuarioDAL.ActualizarIdioma(idUsuario, idIdioma);
+        }
+        public void ModificarJerarquiaUsuario(int idUsuarioTarget, int nuevoNivel, UsuarioBE usuarioAutor)
+        {
+            UsuarioBE target = usuarioDAL.ObtenerPorID(idUsuarioTarget);
+            if (target == null) throw new Exception("El usuario especificado no existe.");
+            if (target.NivelJerarquia == 100)
+            {
+                throw new Exception("Operación Denegada: Un Administrador tiene nivel fijo (100) y no puede ser modificado manualmente.");
+            }
+            if (nuevoNivel < 1 || nuevoNivel > 99)
+            {
+                throw new Exception("Operación Denegada: El nivel de jerarquía debe ser un número entero entre 1 y 99.");
+            }
+            if (usuarioAutor.NivelJerarquia < target.NivelJerarquia)
+            {
+                throw new Exception("Operación Denegada: Su nivel de jerarquía es inferior al del usuario que intenta modificar.");
+            }
+            if (nuevoNivel > usuarioAutor.NivelJerarquia)
+            {
+                throw new Exception($"Operación Denegada: No puede asignar una jerarquía ({nuevoNivel}) superior a la suya ({usuarioAutor.NivelJerarquia}).");
+            }
+            target.NivelJerarquia = nuevoNivel;
+            target.DVH = DVManager.CalcularDVH(target);
+            usuarioDAL.ActualizarJerarquiaYDVH(target.ID, target.NivelJerarquia, target.DVH);
+            integridadBLL.ActualizarDVVGeneral();
+            RegistrarCambioHistorico(target, usuarioAutor.ID, $"Modificación manual de jerarquía a nivel {nuevoNivel}");
         }
     }
 }

@@ -42,13 +42,16 @@ namespace GUI
             dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Accion", HeaderText = "Acción / Motivo", Width = 200 });
             dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NombreUsuarioAutor", HeaderText = "Modificado Por", Width = 120 });
             dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Nombre", HeaderText = "Nombre Histórico", Width = 120 });
+            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NivelJerarquia", HeaderText = "Jerarquía Histórica", Width = 110 });
             dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "IntentosFallidos", HeaderText = "Intentos", Width = 70 });
             dgvHistorial.Columns.Add(new DataGridViewCheckBoxColumn { DataPropertyName = "Bloqueado", HeaderText = "Bloqueado", Width = 70 });
         }
         private void CargarUsuarios()
         {
-            List<UsuarioBE> usuarios = usuarioBLL.ListarTodos();
-            cmbUsuarios.DataSource = usuarios;
+            List<UsuarioBE> todosLosUsuarios = usuarioBLL.ListarTodos();
+            UsuarioBE usuarioAutor = SessionManager.Instancia.UsuarioActual;
+            var usuariosPermitidos = todosLosUsuarios.Where(u => u.NivelJerarquia <= usuarioAutor.NivelJerarquia).ToList();
+            cmbUsuarios.DataSource = usuariosPermitidos;
             cmbUsuarios.DisplayMember = "Nombre";
             cmbUsuarios.ValueMember = "ID";
             cmbUsuarios.SelectedIndex = -1;
@@ -160,6 +163,41 @@ namespace GUI
         private void frmControlCambios_FormClosing(object sender, FormClosingEventArgs e)
         {
             GestorIdioma.Instancia.Desuscribir(this);
+        }
+        private void btnModificarJerarquia_Click(object sender, EventArgs e)
+        {
+            if (cmbUsuarios.SelectedValue == null || !(cmbUsuarios.SelectedValue is int))
+            {
+                MessageBox.Show(T("msgSeleccionarEstado", "Debe seleccionar un usuario."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            int idUsuarioSeleccionado = (int)cmbUsuarios.SelectedValue;
+            string input = Microsoft.VisualBasic.Interaction.InputBox(
+                T("msgInputJerarquia", "Ingrese el nuevo nivel de jerarquía (1 - 99):"),
+                T("titInputJerarquia", "Actualizar Jerarquía"),
+                "1"
+            );
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                if (int.TryParse(input, out int nuevoNivel))
+                {
+                    try
+                    {
+                        UsuarioBE autor = SessionManager.Instancia.UsuarioActual;
+                        usuarioBLL.ModificarJerarquiaUsuario(idUsuarioSeleccionado, nuevoNivel, autor);
+                        MessageBox.Show(T("msgRestauracionExito", "El nivel de jerarquía se actualizó correctamente."), T("titExito", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        CargarHistorial(idUsuarioSeleccionado);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(T("msgJerarquiaInvalida", "Debe ingresar un número entero válido."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
         }
     }
 }

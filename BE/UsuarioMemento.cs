@@ -12,12 +12,14 @@ namespace BE
         public string Clave { get; private set; }
         public int IntentosFallidos { get; private set; }
         public bool Bloqueado { get; private set; }
-        public UsuarioMemento(string nombre, string clave, int intentos, bool bloqueado)
+        public int NivelJerarquia { get; private set; }
+        public UsuarioMemento(string nombre, string clave, int intentos, bool bloqueado, int nivelJerarquia)
         {
             Nombre = nombre;
             Clave = clave;
             IntentosFallidos = intentos;
             Bloqueado = bloqueado;
+            NivelJerarquia = nivelJerarquia;
         }
     }
 }

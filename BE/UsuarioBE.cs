@@ -8,22 +8,18 @@ namespace BE
 {
     public class UsuarioBE
     {
-        [DigitoVerificador(1)]
-        public int ID { get; set; }
-        [DigitoVerificador(2)]
-        public string Nombre { get; set; }
-        [DigitoVerificador(3)]
-        public string Clave { get; set; }
-        [DigitoVerificador(4)]
-        public int IntentosFallidos { get; set; }
-        [DigitoVerificador(5)]
-        public bool Bloqueado { get; set; }
+        [DigitoVerificador(1)] public int ID { get; set; }
+        [DigitoVerificador(2)] public string Nombre { get; set; }
+        [DigitoVerificador(3)] public string Clave { get; set; }
+        [DigitoVerificador(4)] public int IntentosFallidos { get; set; }
+        [DigitoVerificador(5)] public bool Bloqueado { get; set; }
+        [DigitoVerificador(6)] public int NivelJerarquia { get; set; }
         public string DVH { get; set; }
         public List<ComponentePermiso> Permisos { get; set; } = new List<ComponentePermiso>();
         public IdiomaBE Idioma { get; set; }
         public UsuarioMemento CrearMemento()
         {
-            return new UsuarioMemento(this.Nombre, this.Clave, this.IntentosFallidos, this.Bloqueado);
+            return new UsuarioMemento(this.Nombre, this.Clave, this.IntentosFallidos, this.Bloqueado, this.NivelJerarquia);
         }
         public void RestaurarMemento(UsuarioMemento memento)
         {
@@ -31,6 +27,7 @@ namespace BE
             this.Clave = memento.Clave;
             this.IntentosFallidos = memento.IntentosFallidos;
             this.Bloqueado = memento.Bloqueado;
+            this.NivelJerarquia = memento.NivelJerarquia;
         }
         public bool TienePermiso(string codigoPermiso)
         {

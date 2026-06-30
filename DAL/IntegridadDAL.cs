@@ -16,7 +16,7 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH FROM Usuario ORDER BY ID";
+                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, NivelJerarquia FROM Usuario ORDER BY ID";
                 using (SqlCommand cmd = new SqlCommand(consulta, cn))
                 {
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -30,7 +30,8 @@ namespace DAL
                                 Clave = reader["Clave"].ToString(),
                                 IntentosFallidos = Convert.ToInt32(reader["IntentosFallidos"]),
                                 Bloqueado = Convert.ToBoolean(reader["Bloqueado"]),
-                                DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null
+                                DVH = reader["DVH"] != DBNull.Value ? reader["DVH"].ToString() : null,
+                                NivelJerarquia = Convert.ToInt32(reader["NivelJerarquia"])
                             });
                         }
                     }

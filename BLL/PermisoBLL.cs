@@ -1,5 +1,6 @@
 ﻿using BE;
 using DAL;
+using Seguridad;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,6 +104,24 @@ namespace BLL
                     if (adminsRestantes <= 1)
                         throw new Exception("Operación denegada. El sistema debe mantener al menos un usuario con el rol de Administrador.");
                 }
+            }
+            if (tieneAdminAhora && usuario.NivelJerarquia != 100)
+            {
+                usuario.NivelJerarquia = 100;
+                usuario.DVH = DVManager.CalcularDVH(usuario);
+                UsuarioDAL usuarioDAL = new UsuarioDAL();
+                usuarioDAL.ActualizarJerarquiaYDVH(usuario.ID, usuario.NivelJerarquia, usuario.DVH);
+                IntegridadBLL intBLL = new IntegridadBLL();
+                intBLL.ActualizarDVVGeneral();
+            }
+            else if (!tieneAdminAhora && usuario.NivelJerarquia == 100)
+            {
+                usuario.NivelJerarquia = 99;
+                usuario.DVH = DVManager.CalcularDVH(usuario);
+                UsuarioDAL usuarioDAL = new UsuarioDAL();
+                usuarioDAL.ActualizarJerarquiaYDVH(usuario.ID, usuario.NivelJerarquia, usuario.DVH);
+                IntegridadBLL intBLL = new IntegridadBLL();
+                intBLL.ActualizarDVVGeneral();
             }
             permisoDAL.LimpiarPermisosUsuario(usuario.ID);
             foreach (var permiso in usuario.Permisos)
