@@ -11,6 +11,12 @@ namespace BLL
     public class PermisoBLL
     {
         private PermisoDAL permisoDAL = new PermisoDAL();
+        private readonly List<string> permisosExclusivosAdmin = new List<string>
+        {
+            "REALIZAR_BACKUP",
+            "GESTION_ROLES",
+            "GESTION_IDIOMAS"
+        };
         public bool ExisteReferenciaCircular(ComponentePermiso hijoAAgregar, int idPadreDestino)
         {
             if (hijoAAgregar.ID == idPadreDestino) return true;
@@ -63,9 +69,9 @@ namespace BLL
             }
             foreach (var hijo in familia.ObtenerHijos())
             {
-                if (hijo.PermisoCodigo == "REALIZAR_BACKUP")
+                if (!string.IsNullOrEmpty(hijo.PermisoCodigo) && permisosExclusivosAdmin.Contains(hijo.PermisoCodigo.ToUpper()))
                 {
-                    throw new Exception("Violación de Privilegios: La patente de Backup es exclusiva del Administrador. No puede ser delegada ni incluida en el rol '" + familia.Nombre + "'.");
+                    throw new Exception($"Violación de Privilegios: La patente '{hijo.Nombre}' es exclusiva del Administrador. No puede ser delegada ni incluida en el rol personalizado '{familia.Nombre}'.");
                 }
                 if (ExisteReferenciaCircular(hijo, familia.ID))
                     throw new Exception($"Error de Referencia Circular detectado al intentar agregar {hijo.Nombre} a {familia.Nombre}.");
@@ -101,9 +107,9 @@ namespace BLL
             permisoDAL.LimpiarPermisosUsuario(usuario.ID);
             foreach (var permiso in usuario.Permisos)
             {
-                if (permiso.PermisoCodigo == "REALIZAR_BACKUP")
+                if (!string.IsNullOrEmpty(permiso.PermisoCodigo) && permisosExclusivosAdmin.Contains(permiso.PermisoCodigo.ToUpper()))
                 {
-                    throw new Exception("Violación de Privilegios: La patente de Backup se hereda automáticamente al poseer el rol Administrador. Está estrictamente prohibido asignarla como un permiso suelto a un usuario.");
+                    throw new Exception($"Violación de Privilegios: La patente '{permiso.Nombre}' se hereda automáticamente al poseer el rol Administrador. Está estrictamente prohibido asignarla como un permiso suelto a un usuario.");
                 }
                 permisoDAL.AsignarPermisoUsuario(usuario.ID, permiso.ID);
             }
