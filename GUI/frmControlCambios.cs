@@ -38,13 +38,13 @@ namespace GUI
             dgvHistorial.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvHistorial.MultiSelect = false;
             dgvHistorial.ReadOnly = true;
-            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "FechaHora", HeaderText = "Fecha del Cambio", Width = 140 });
-            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Accion", HeaderText = "Acción / Motivo", Width = 200 });
-            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NombreUsuarioAutor", HeaderText = "Modificado Por", Width = 120 });
-            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Nombre", HeaderText = "Nombre Histórico", Width = 120 });
-            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NivelJerarquia", HeaderText = "Jerarquía Histórica", Width = 110 });
-            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "IntentosFallidos", HeaderText = "Intentos", Width = 70 });
-            dgvHistorial.Columns.Add(new DataGridViewCheckBoxColumn { DataPropertyName = "Bloqueado", HeaderText = "Bloqueado", Width = 70 });
+            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "FechaHora", HeaderText = T("FechaHora", "Fecha del Cambio"), Width = 140 });
+            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Accion", HeaderText = T("Accion", "Acción / Motivo"), Width = 200 });
+            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NombreUsuarioAutor", HeaderText = T("NombreUsuarioAutor", "Modificado Por"), Width = 120 });
+            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Nombre", HeaderText = T("Nombre", "Nombre Histórico"), Width = 120 });
+            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NivelJerarquia", HeaderText = T("NivelJerarquia", "Jerarquía Histórica"), Width = 110 });
+            dgvHistorial.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "IntentosFallidos", HeaderText = T("IntentosFallidos", "Intentos"), Width = 70 });
+            dgvHistorial.Columns.Add(new DataGridViewCheckBoxColumn { DataPropertyName = "Bloqueado", HeaderText = T("Bloqueado", "Bloqueado"), Width = 70 });
         }
         private void CargarUsuarios()
         {
@@ -127,7 +127,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, T("msgErrorHistorial", "Error al cargar historial"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(T(ex.Message, ex.Message), T("msgErrorHistorial", "Error al cargar historial"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnRestaurar_Click(object sender, EventArgs e)
@@ -151,11 +151,10 @@ namespace GUI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, T("msgErrorRestauracion", "Error en la restauración"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(T(ex.Message, ex.Message), T("msgErrorRestauracion", "Error en la restauración"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
-
         private void btnVolver_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -168,7 +167,7 @@ namespace GUI
         {
             if (cmbUsuarios.SelectedValue == null || !(cmbUsuarios.SelectedValue is int))
             {
-                MessageBox.Show(T("msgSeleccionarEstado", "Debe seleccionar un usuario."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(T("msgSeleccionarUsuario", "Debe seleccionar un usuario."), T("titAtencion", "Atención"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             int idUsuarioSeleccionado = (int)cmbUsuarios.SelectedValue;
@@ -185,12 +184,12 @@ namespace GUI
                     {
                         UsuarioBE autor = SessionManager.Instancia.UsuarioActual;
                         usuarioBLL.ModificarJerarquiaUsuario(idUsuarioSeleccionado, nuevoNivel, autor);
-                        MessageBox.Show(T("msgRestauracionExito", "El nivel de jerarquía se actualizó correctamente."), T("titExito", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(T("msgJerarquiaExito", "El nivel de jerarquía se actualizó correctamente."), T("titExito", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                         CargarHistorial(idUsuarioSeleccionado);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(T(ex.Message, ex.Message), T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else

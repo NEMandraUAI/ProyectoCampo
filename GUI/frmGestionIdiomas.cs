@@ -49,18 +49,18 @@ namespace GUI
             this.Name = "frmGestionIdiomas";
             this.Size = new Size(720, 580);
             this.StartPosition = FormStartPosition.CenterScreen;
-            lblSeleccion = new Label { Location = new Point(20, 25), AutoSize = true, Name = "lblSeleccion", Text = "Seleccionar Idioma:" };
+            lblSeleccion = new Label { Location = new Point(20, 25), AutoSize = true, Name = "lblSeleccion", Text = T("lblSeleccion", "Seleccionar Idioma:") };
             cmbIdiomasAdmin = new ComboBox { Location = new Point(150, 20), Width = 200, DropDownStyle = ComboBoxStyle.DropDownList, Name = "cmbIdiomasAdmin" };
             cmbIdiomasAdmin.SelectedIndexChanged += CmbIdiomasAdmin_SelectedIndexChanged;
-            btnNuevo = new Button { Location = new Point(370, 18), Width = 110, Name = "btnNuevo", Text = "Nuevo Idioma" };
+            btnNuevo = new Button { Location = new Point(370, 18), Width = 110, Name = "btnNuevo", Text = T("btnNuevo", "Nuevo Idioma") };
             btnNuevo.Click += BtnNuevo_Click;
-            btnEliminar = new Button { Location = new Point(490, 18), Width = 110, Name = "btnEliminar", Text = "Eliminar Idioma" };
+            btnEliminar = new Button { Location = new Point(490, 18), Width = 110, Name = "btnEliminar", Text = T("btnEliminar", "Eliminar Idioma") };
             btnEliminar.Click += BtnEliminar_Click;
-            lblFiltroFormulario = new Label { Location = new Point(20, 65), AutoSize = true, Name = "lblFiltroFormulario", Text = "Filtrar por Formulario:" };
+            lblFiltroFormulario = new Label { Location = new Point(20, 65), AutoSize = true, Name = "lblFiltroFormulario", Text = T("lblFiltroFormulario", "Filtrar por Formulario:") };
             cmbFiltroFormulario = new ComboBox { Location = new Point(160, 60), Width = 150, DropDownStyle = ComboBoxStyle.DropDownList, Name = "cmbFiltroFormulario" };
-            lblFiltroTexto = new Label { Location = new Point(330, 65), AutoSize = true, Name = "lblFiltroTexto", Text = "Buscar Texto:" };
+            lblFiltroTexto = new Label { Location = new Point(330, 65), AutoSize = true, Name = "lblFiltroTexto", Text = T("lblFiltroTexto", "Buscar Texto:") };
             txtFiltroTexto = new TextBox { Location = new Point(420, 60), Width = 150, Name = "txtFiltroTexto" };
-            btnLimpiarFiltros = new Button { Location = new Point(590, 58), Width = 90, Name = "btnLimpiarFiltros", Text = "Limpiar" };
+            btnLimpiarFiltros = new Button { Location = new Point(590, 58), Width = 90, Name = "btnLimpiarFiltros", Text = T("btnLimpiarFiltros", "Limpiar") };
             cmbFiltroFormulario.SelectedIndexChanged += CmbFiltroFormulario_SelectedIndexChanged;
             txtFiltroTexto.TextChanged += TxtFiltroTexto_TextChanged;
             btnLimpiarFiltros.Click += BtnLimpiarFiltros_Click;
@@ -74,11 +74,11 @@ namespace GUI
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 Name = "dgvTraducciones"
             };
-            colFormulario = new DataGridViewTextBoxColumn { DataPropertyName = "Formulario", ReadOnly = true, Width = 150, Name = "colFormulario", HeaderText = "Formulario" };
-            colNombreControl = new DataGridViewTextBoxColumn { DataPropertyName = "NombreControl", ReadOnly = true, Width = 150, Name = "colNombreControl", HeaderText = "Control" };
-            colTexto = new DataGridViewTextBoxColumn { DataPropertyName = "Texto", Width = 310, Name = "colTexto", HeaderText = "Texto Traducido" };
+            colFormulario = new DataGridViewTextBoxColumn { DataPropertyName = "Formulario", ReadOnly = true, Width = 150, Name = "colFormulario", HeaderText = T("colFormulario", "Formulario") };
+            colNombreControl = new DataGridViewTextBoxColumn { DataPropertyName = "NombreControl", ReadOnly = true, Width = 150, Name = "colNombreControl", HeaderText = T("colNombreControl", "Control") };
+            colTexto = new DataGridViewTextBoxColumn { DataPropertyName = "Texto", Width = 310, Name = "colTexto", HeaderText = T("colTexto", "Texto Traducido") };
             dgvTraducciones.Columns.AddRange(new DataGridViewColumn[] { colFormulario, colNombreControl, colTexto });
-            btnGuardar = new Button { Location = new Point(440, 480), Width = 240, Height = 40, Name = "btnGuardar", Text = "Guardar Cambios" };
+            btnGuardar = new Button { Location = new Point(440, 480), Width = 240, Height = 40, Name = "btnGuardar", Text = T("btnGuardar", "Guardar Cambios") };
             btnGuardar.Click += BtnGuardar_Click;
             this.Controls.Add(lblSeleccion);
             this.Controls.Add(cmbIdiomasAdmin);
@@ -176,7 +176,7 @@ namespace GUI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(T(ex.Message, ex.Message), T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace GUI
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(T(ex.Message, ex.Message), T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -221,7 +221,7 @@ namespace GUI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(T(ex.Message, ex.Message), T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

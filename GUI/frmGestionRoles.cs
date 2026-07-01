@@ -176,10 +176,10 @@ namespace GUI
                 try
                 {
                     permisoBLL.GuardarFamiliaCompleta(nuevaFamilia);
-                    MessageBox.Show(T("msgRolCreado", "Rol creado. Ahora selecciónelo y añada permisos."));
+                    MessageBox.Show(T("msgRolCreado", "Rol creado. Ahora selecciónelo y añada permisos."), T("titExito", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                     CargarArbolRoles();
                 }
-                catch (Exception ex) { MessageBox.Show(ex.Message); }
+                catch (Exception ex) { MessageBox.Show(T(ex.Message, ex.Message), T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error); }
             }
         }
         private void btnEliminarFamilia_Click(object sender, EventArgs e)
@@ -190,11 +190,11 @@ namespace GUI
                 {
                     permisoBLL.EliminarFamilia(fam);
                     CargarArbolRoles();
-                    MessageBox.Show(T("msgRolEliminado", "Rol eliminado del sistema."));
+                    MessageBox.Show(T("msgRolEliminado", "Rol eliminado del sistema."), T("titExito", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, T("titEliminacionDenegada", "Eliminación denegada"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(T(ex.Message, ex.Message), T("titEliminacionDenegada", "Eliminación denegada"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -227,7 +227,7 @@ namespace GUI
                         cmbUsuarios_SelectedIndexChanged(null, null);
                         NotificarPosibleCambioEnUsuarioActual();
                     }
-                    catch (Exception ex) { MessageBox.Show(ex.Message); }
+                    catch (Exception ex) { MessageBox.Show(T(ex.Message, ex.Message), T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
             }
         }
@@ -249,7 +249,7 @@ namespace GUI
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, T("titErrorValidacion", "Error de validación"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(T(ex.Message, ex.Message), T("titErrorValidacion", "Error de validación"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                         cmbUsuarios_SelectedIndexChanged(null, null);
                     }
                 }
@@ -286,7 +286,7 @@ namespace GUI
             catch (Exception ex)
             {
                 familiaDestino.RemoverHijo(origen);
-                MessageBox.Show(ex.Message, T("titErrorValidacion", "Error de Validación"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(T(ex.Message, ex.Message), T("titErrorValidacion", "Error de validación"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnCrearRolAnidado_Click(object sender, EventArgs e)
@@ -315,7 +315,7 @@ namespace GUI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(T(ex.Message, ex.Message), T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

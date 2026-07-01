@@ -18,7 +18,7 @@ namespace GUI
         {
             InitializeComponent();
             txtClave.PasswordChar = '*';
-            btnVerClave.Text = "Ver Clave";
+            btnVerClave.Text = T("btnVerClave_Text", "Ver Clave");
             GestorIdioma.Instancia.Suscribir(this);
         }
         private void btnIniciarSesion_Click_1(object sender, EventArgs e)
@@ -35,7 +35,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, T("titErrorAuth", "Error de Autenticación"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(T(ex.Message, ex.Message), T("titErrorAuth", "Error de Autenticación"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
         private void btnVerClave_Click(object sender, EventArgs e)

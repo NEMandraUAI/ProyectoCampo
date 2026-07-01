@@ -69,8 +69,8 @@ namespace GUI
                         else if (opcion == DialogResult.No)
                         {
                             OpenFileDialog ofd = new OpenFileDialog();
-                            ofd.Filter = "Archivos de Backup SQL (*.bak)|*.bak";
-                            ofd.Title = "Seleccione el archivo de respaldo para restaurar";
+                            ofd.Filter = T("FiltroRestore", "Archivos de Backup SQL (*.bak)|*.bak");
+                            ofd.Title = T("titRestore", "Seleccione el archivo de respaldo para restaurar");
                             if (ofd.ShowDialog() == DialogResult.OK)
                             {
                                 try
@@ -111,7 +111,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + T("msgCorrupcion", "\nEl sistema se bloqueará por seguridad. Contacte al administrador."), T("titCorrupcion", "Corrupción de Datos"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(T(ex.Message, ex.Message) + T("msgCorrupcion", "\nEl sistema se bloqueará por seguridad. Contacte al administrador."), T("titCorrupcion", "Corrupción de Datos"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 foreach (Form f in this.MdiChildren)
                 {
                     f.Close();
@@ -152,7 +152,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + T("msgCorrupcion", "\nEl sistema se bloqueará por seguridad. Contacte al administrador."), T("titCorrupcion", "Corrupción de Datos"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(T(ex.Message, ex.Message) + T("msgCorrupcion", "\nEl sistema se bloqueará por seguridad. Contacte al administrador."), T("titCorrupcion", "Corrupción de Datos"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 foreach (Form f in this.MdiChildren)
                 {
                     f.Close();
@@ -175,7 +175,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + T("msgCorrupcion", "\nEl sistema se bloqueará por seguridad. Contacte al administrador."), T("titCorrupcion", "Corrupción de Datos"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(T(ex.Message, ex.Message) + T("msgCorrupcion", "\nEl sistema se bloqueará por seguridad. Contacte al administrador."), T("titCorrupcion", "Corrupción de Datos"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 foreach (Form f in this.MdiChildren)
                 {
                     f.Close();
@@ -218,7 +218,7 @@ namespace GUI
             cmbIdiomas.SelectedIndexChanged += cmbIdiomas_SelectedIndexChanged;
             ActualizarIdioma(GestorIdioma.Instancia.IdiomaActual);
             btnNuevoIdioma.Visible = false;
-            btnNuevoIdioma.Text = "Gestionar Idiomas";
+            btnNuevoIdioma.Text = T("btnNuevoIdioma", "Gestionar Idiomas");
             btnNuevoIdioma.Click += AbrirPanelAdministrador_Click;
         }
         public void ActualizarIdioma(IdiomaBE idioma)

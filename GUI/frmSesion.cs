@@ -136,10 +136,10 @@ namespace GUI
         private void ConfigurarGrilla()
         {
             dgvLogs.Columns.Clear();
-            dgvLogs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "FechaHora", HeaderText = "Fecha", Width = 130 });
-            dgvLogs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NombreUsuario", HeaderText = "Usuario", Width = 100 });
-            dgvLogs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Criticidad", HeaderText = "Criticidad", Width = 90 });
-            dgvLogs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Evento", HeaderText = "Detalle del Evento", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+            dgvLogs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "FechaHora", HeaderText = T("FechaHora", "Fecha"), Width = 130 });
+            dgvLogs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "NombreUsuario", HeaderText = T("NombreUsuario", "Usuario"), Width = 100 });
+            dgvLogs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Criticidad", HeaderText = T("Criticidad", "Criticidad"), Width = 90 });
+            dgvLogs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Evento", HeaderText = T("Evento", "Detalle del Evento"), AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
             dgvLogs.CellFormatting += DgvLogs_CellFormatting;
         }
         private void CargarComboUsuarios()
@@ -201,6 +201,14 @@ namespace GUI
         {
             if (dgvLogs.Rows[e.RowIndex].DataBoundItem is RegistroBE fila)
             {
+                if (dgvLogs.Columns[e.ColumnIndex].DataPropertyName == "Criticidad" && e.Value != null)
+                {
+                    string crit = e.Value.ToString();
+                    if (crit == "INFO") e.Value = T("criticidadInfo", "INFORMACIÓN");
+                    else if (crit == "ALERTA") e.Value = T("criticidadAlerta", "ALERTA");
+                    else if (crit == "CRÍTICO") e.Value = T("criticidadCritico", "CRÍTICO");
+                    else if (crit == "ALTA") e.Value = T("criticidadAlta", "ALTA");
+                }
                 if (fila.Criticidad == "ALERTA")
                 {
                     dgvLogs.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightYellow;

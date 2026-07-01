@@ -26,7 +26,7 @@ namespace GUI
             InitializeComponent();
             txtClave1.PasswordChar = '*';
             txtClave2.PasswordChar = '*';
-            btnVerClave.Text = "Ver Clave";
+            btnVerClave.Text = T("btnVerClave_Text", "Ver Clave");
             GestorIdioma.Instancia.Suscribir(this);
         }
         private void btnRegistrar_Click(object sender, EventArgs e)
@@ -49,7 +49,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(T(ex.Message, ex.Message), T("titError", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void btnVerClave_Click(object sender, EventArgs e)
