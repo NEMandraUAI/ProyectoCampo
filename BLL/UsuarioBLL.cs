@@ -125,6 +125,10 @@ namespace BLL
             if (versionARestaurar == null)
                 throw new Exception("No se encontró el estado histórico especificado.");
             UsuarioBE usuarioActual = usuarioDAL.ObtenerPorID(idUsuario);
+            if (usuarioActual.NivelJerarquia == 100 && versionARestaurar.NivelJerarquia != 100)
+            {
+                throw new Exception("Operación Denegada: El usuario seleccionado actualmente es Administrador y posee un nivel fijo de jerarquía (100). No se permite restaurar un estado histórico que altere o reduzca su nivel jerárquico.");
+            }
             if (usuarioAutor.NivelJerarquia < usuarioActual.NivelJerarquia)
             {
                 throw new Exception("Operación de Seguridad Denegada: No tiene la jerarquía suficiente para modificar a este usuario.");
@@ -132,7 +136,8 @@ namespace BLL
             if (usuarioActual.Nombre == versionARestaurar.Nombre &&
                 usuarioActual.Clave == versionARestaurar.Clave &&
                 usuarioActual.IntentosFallidos == versionARestaurar.IntentosFallidos &&
-                usuarioActual.Bloqueado == versionARestaurar.Bloqueado)
+                usuarioActual.Bloqueado == versionARestaurar.Bloqueado &&
+                usuarioActual.NivelJerarquia == versionARestaurar.NivelJerarquia)
             {
                 throw new Exception("El estado histórico seleccionado es idéntico al estado actual del usuario. No se puede realizar una restauración redundante.");
             }
@@ -154,6 +159,7 @@ namespace BLL
                 Clave = usuarioActual.Clave,
                 IntentosFallidos = usuarioActual.IntentosFallidos,
                 Bloqueado = usuarioActual.Bloqueado,
+                NivelJerarquia = usuarioActual.NivelJerarquia,
                 ID_Usuario_Autor = usuarioAutor.ID,
                 FechaHora = DateTime.Now,
                 Accion = $"Restauración a versión de fecha {versionARestaurar.FechaHora}"
@@ -170,6 +176,7 @@ namespace BLL
                 Clave = usuarioAfectado.Clave,
                 IntentosFallidos = usuarioAfectado.IntentosFallidos,
                 Bloqueado = usuarioAfectado.Bloqueado,
+                NivelJerarquia = usuarioAfectado.NivelJerarquia,
                 ID_Usuario_Autor = idAutor,
                 FechaHora = DateTime.Now,
                 Accion = accion
