@@ -16,9 +16,9 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "SELECT ID, Nombre, Clave, IntentosFallidos, Bloqueado, DVH, ID_Idioma, NivelJerarquia FROM Usuario WHERE Nombre = @Nombre";
-                using (SqlCommand cmd = new SqlCommand(consulta, cn))
+                using (SqlCommand cmd = new SqlCommand("sp_Usuario_ObtenerPorUsername", cn))
                 {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Nombre", nombreUsuario);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -44,9 +44,9 @@ namespace DAL
             using (SqlConnection cn = ConexionDAL.Instancia.ObtenerConexion())
             {
                 cn.Open();
-                string consulta = "UPDATE Usuario SET IntentosFallidos = @Intentos, Bloqueado = @Bloqueado, DVH = @DVH WHERE ID = @ID";
-                using (SqlCommand cmd = new SqlCommand(consulta, cn))
+                using (SqlCommand cmd = new SqlCommand("sp_Usuario_ActualizarEstado", cn))
                 {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Intentos", usuario.IntentosFallidos);
                     cmd.Parameters.AddWithValue("@Bloqueado", usuario.Bloqueado);
                     cmd.Parameters.AddWithValue("@DVH", (object)usuario.DVH ?? DBNull.Value);

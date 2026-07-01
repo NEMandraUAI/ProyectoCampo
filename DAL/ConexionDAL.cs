@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,11 @@ namespace DAL
     {
         private static ConexionDAL instancia;
         private static readonly object candado = new object();
-        private string cadenaConexion = "Data Source=.;Initial Catalog=ProyectoCampo;Integrated Security=True;Trust Server Certificate=True";
-        private ConexionDAL() { }
+        private string cadenaConexion;
+        private ConexionDAL()
+        {
+            cadenaConexion = ConfigurationManager.ConnectionStrings["CadenaProyectoCampo"].ConnectionString;
+        }
         public static ConexionDAL Instancia
         {
             get
