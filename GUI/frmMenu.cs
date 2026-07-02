@@ -40,7 +40,7 @@ namespace GUI
                 }
                 catch
                 {
-                    // Si cae aquí, es porque la BD está corrupta. Permitimos que el flujo continúe.
+                    // Si cae aca, es porque la BD está corrupta. Permitimos que el flujo continúe.
                 }
                 string claveIngresada = SolicitarClaveEmergencia();
                 if (!string.IsNullOrEmpty(claveIngresada))
